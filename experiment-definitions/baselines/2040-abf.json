@@ -1,0 +1,13 @@
+{
+  "layers": [
+    {
+      "name": "ABF",
+      "matcher_method": "DBSLeipzig/ABF/Mainzelliste",
+      "encoding_method": "DBSLeipzig/Keyed/Freq/ABF/NCVR-F",
+      "max_batches": 0,
+      "active": true
+    }
+  ],
+  "plaintext_dataset_id": 2040,
+  "initial_dataset_id": 2140
+}

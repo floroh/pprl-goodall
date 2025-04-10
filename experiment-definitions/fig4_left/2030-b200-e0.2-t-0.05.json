@@ -1,0 +1,49 @@
+{
+  "layers": [
+    {
+      "name": "RBF",
+      "matcher_method": "DBSLeipzig/RBF/Train/PB",
+      "encoding_method": "DBSLeipzig/RBF/NCVR-F-avg",
+      "update_matcher": true,
+      "update_type": "IMPROVED",
+      "initial_threshold": 0.71,
+      "budget": -1,
+      "active": true
+    },
+    {
+      "name": "ABF",
+      "matcher_method": "DBSLeipzig/ABF/Freq/PB/Weka/WEKA_EXP_RANDOM_FOREST",
+      "batch_size_config": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        1000
+      ],
+      "max_batches": 9,
+      "encoding_method": "DBSLeipzig/Keyed/Freq/ABF/NoPT/NCVR-F",
+      "update_matcher": true,
+      "update_type": "UPPER_IMPROVED",
+      "budget": -1,
+      "batch_size": 100,
+      "active": true
+    },
+    {
+      "name": "PPCR",
+      "matcher_method": "DBSLeipzig/PPCR/GT",
+      "batch_size_config": [
+        20
+      ],
+      "max_batches": 2,
+      "encoding_method": "DBSLeipzig/Plain/Selective",
+      "update_type": "UPPER_IMPROVED",
+      "budget": 200,
+      "error_rate": 0.2,
+      "batch_size": 20,
+      "active": true
+    }
+  ],
+  "plaintext_dataset_id": 2030,
+  "initial_dataset_id": 2230
+}
