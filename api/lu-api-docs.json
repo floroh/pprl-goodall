@@ -1,0 +1,2361 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "PPRL Linkage Unit Service API",
+        "description": "Linkage / Matching services for privacy-preserving record linkage",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        },
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8082",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Linkage result evaluation",
+            "description": "Evaluate linkage results"
+        },
+        {
+            "name": "Dataset analysis",
+            "description": "Analyse records of a dataset"
+        },
+        {
+            "name": "Project-based batch matching",
+            "description": "Project-based batch matching "
+        },
+        {
+            "name": "Configuration management",
+            "description": "Manage matching configurations"
+        },
+        {
+            "name": "Linkage result analysis",
+            "description": "Analyse linkage results"
+        },
+        {
+            "name": "Transient batch matching",
+            "description": "Batch matching without persistence"
+        },
+        {
+            "name": "Multi layer protocols",
+            "description": "Handling of multi layer protocols"
+        },
+        {
+            "name": "Dataset management",
+            "description": "Manage records in the database"
+        }
+    ],
+    "paths": {
+        "/record": {
+            "put": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Update an existing record in the database",
+                "operationId": "update",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordIdDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Add a record to the database",
+                "operationId": "insert",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordIdDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/pairs": {
+            "put": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Update record pairs",
+                "operationId": "updateRecordPairs",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RecordPairDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Add record pairs",
+                "operationId": "addRecordPairs",
+                "parameters": [
+                    {
+                        "name": "merge",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RecordPairDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/config/": {
+            "put": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Override an existing configuration",
+                "operationId": "update_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatchingDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Add a configuration",
+                "operationId": "add",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatchingDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Remove a configuration",
+                "operationId": "remove_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatcherIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/search": {
+            "post": {
+                "tags": [
+                    "incremental-matcher-controller"
+                ],
+                "operationId": "search",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/findBySource/{idDataset}": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve a persisted record by source",
+                "operationId": "findByDatasetAndSource",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/findByRecordId/{idDataset}": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve a persisted record by its record id (source + local)",
+                "operationId": "findByRecordId",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/findByIds": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve multiple persisted records",
+                "operationId": "findByUniqueIds",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/datasets": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get available dataset descriptions, optionally filtered by plaintextDatasetId",
+                "operationId": "getDatasetDescriptions",
+                "parameters": [
+                    {
+                        "name": "plaintextDatasetId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DatasetDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Add a dataset description",
+                "operationId": "addDatasetDescription",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DatasetDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DatasetDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/batch": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Add multiple records to the database",
+                "operationId": "insertBatch",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordIdDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/pairs/report/{projectId}": {
+            "post": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Report links",
+                "operationId": "reportPairs",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/pairs/reclassify/{projectId}": {
+            "post": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Reclassify active links",
+                "operationId": "reclassify",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/protocol/pairs/fetch/{projectId}": {
+            "post": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Fetch and compare uncertain pairs from parent project for new records",
+                "operationId": "fetchPairs",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/protocol/matcher/update": {
+            "post": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Update a matcher based on improved links",
+                "operationId": "update_2",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatcherUpdateRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchingDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/run": {
+            "post": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Execute (parts of) a linkage project",
+                "operationId": "runParts",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchMatchProjectExecutionDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/runForNew/{projectId}": {
+            "post": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Run a linkage project for new records",
+                "operationId": "runForNew",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/run/{projectId}": {
+            "post": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Run (the next phase of) a linkage project",
+                "operationId": "runNext",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/reset": {
+            "post": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Reset a linkage project",
+                "operationId": "reset",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchMatchProjectExecutionDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/": {
+            "post": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Create new linkage project",
+                "operationId": "create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchMatchProjectDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/insert": {
+            "post": {
+                "tags": [
+                    "incremental-matcher-controller"
+                ],
+                "operationId": "create_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordIdDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/evaluation/matcher/fit": {
+            "post": {
+                "tags": [
+                    "Linkage result evaluation"
+                ],
+                "summary": "Fit a matcher for a dataset with ground truth",
+                "operationId": "fit",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatcherTrainingsRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchingDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/evaluation/ground-truth": {
+            "post": {
+                "tags": [
+                    "Linkage result evaluation"
+                ],
+                "summary": "Add ground truth for a dataset",
+                "operationId": "addGroundTruth",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroundTruthDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/evaluation/ground-truth/{datasetId}": {
+            "get": {
+                "tags": [
+                    "Linkage result evaluation"
+                ],
+                "summary": "Get ground truth for a dataset",
+                "operationId": "fetch",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GroundTruthDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Linkage result evaluation"
+                ],
+                "summary": "Add ground truth for a dataset based on record global ids",
+                "operationId": "addGroundTruthFromGlobalIds",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RecordIdDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/config/findById": {
+            "post": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Get the configuration by its ID",
+                "operationId": "getMatching",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatcherIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchingDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/classifier": {
+            "post": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Get classifier description",
+                "operationId": "getClassifierDescription",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatcherIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchingDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/match": {
+            "post": {
+                "tags": [
+                    "Transient batch matching"
+                ],
+                "summary": "Batch matcher",
+                "operationId": "match",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchMatchRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/cluster": {
+            "post": {
+                "tags": [
+                    "Transient batch matching"
+                ],
+                "summary": "Cluster and assign global IDs based on precomputed links",
+                "operationId": "cluster",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClusteringRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/run": {
+            "post": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Run a specific analysis type",
+                "operationId": "runAnalysis",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnalysisRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AnalysisResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/runValidation": {
+            "post": {
+                "tags": [
+                    "Linkage result analysis"
+                ],
+                "summary": "Run a specific dataset analysis type",
+                "operationId": "runValidationAnalysis",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnalysisRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AnalysisResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/pairs": {
+            "post": {
+                "tags": [
+                    "Linkage result analysis"
+                ],
+                "summary": "Get record pairs",
+                "operationId": "getPairs",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResultRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordPairDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/eval": {
+            "post": {
+                "tags": [
+                    "Linkage result analysis"
+                ],
+                "summary": "Run a specific linkage result analysis type",
+                "operationId": "runLinkageResultAnalysis",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatchResultAnalysisRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AnalysisResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/{uniqueId}": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve a persisted record",
+                "operationId": "findByUniqueId",
+                "parameters": [
+                    {
+                        "name": "uniqueId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/{idDataset}/count": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get the number of records in the database",
+                "operationId": "count",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/{idDataset}/all": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get all records from the database",
+                "operationId": "getAll",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": -1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Clear the record database",
+                "operationId": "deleteAll",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/record/datasets/{idDataset}": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get dataset description",
+                "operationId": "getDatasetDescription",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DatasetDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Delete dataset",
+                "operationId": "deleteDataset",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/record/datasets/ids": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get available dataset ids",
+                "operationId": "getDatasetIds",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/compare/{idDataset0}/{idDataset1}": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Compare dataset",
+                "operationId": "compareDatasets",
+                "parameters": [
+                    {
+                        "name": "idDataset0",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "idDataset1",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/wishlist/{projectId}": {
+            "get": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Get record encoding wishes",
+                "operationId": "getWishes",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "create",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "true"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordEncodingWishDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/pairs/uncertain/{projectId}": {
+            "get": {
+                "tags": [
+                    "Multi layer protocols"
+                ],
+                "summary": "Determine uncertain record pairs",
+                "operationId": "determineUncertainPairs",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": -1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordPairDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/{projectId}": {
+            "get": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Get an existing linkage project",
+                "operationId": "get",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "update",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Delete a project",
+                "operationId": "delete",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "deleteParents",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/project/findAll": {
+            "get": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Get existing linkage projects",
+                "operationId": "findAll",
+                "parameters": [
+                    {
+                        "name": "update",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/findAll": {
+            "get": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Get a list of all configuration IDs",
+                "operationId": "getConfigs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MatcherIdDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/findAllRequirements": {
+            "get": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Get descriptions of the requirements of all matching methods",
+                "operationId": "getMethodRequirements",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordRequirementsDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/findAll": {
+            "get": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get a list of all supported analysis types",
+                "operationId": "getAnalysisTypes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/all": {
+            "delete": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Delete all projects",
+                "operationId": "deleteAll_1",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/config/unused": {
+            "delete": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Remove unused configurations",
+                "operationId": "remove",
+                "parameters": [
+                    {
+                        "name": "dryRun",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AttributeDto": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EncodingIdDto": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string",
+                        "description": "Name of the encoding scheme"
+                    },
+                    "project": {
+                        "type": "string",
+                        "description": "Unique name of the record-linkage project"
+                    }
+                },
+                "description": "ID of an encoding scheme"
+            },
+            "RecordDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/AttributeDto"
+                        }
+                    }
+                }
+            },
+            "RecordIdDto": {
+                "type": "object",
+                "properties": {
+                    "unique": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "local": {
+                        "type": "string"
+                    },
+                    "global": {
+                        "type": "string"
+                    },
+                    "blocks": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "RecordPairDto": {
+                "type": "object",
+                "properties": {
+                    "id0": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "id1": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "matchGrade": {
+                        "type": "string"
+                    },
+                    "similarity": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "properties": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "attributeSimilarities": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    }
+                }
+            },
+            "Tag": {
+                "type": "object",
+                "properties": {
+                    "id0": {
+                        "type": "string"
+                    },
+                    "id1": {
+                        "type": "string"
+                    },
+                    "attribute": {
+                        "type": "string"
+                    },
+                    "tag": {
+                        "type": "string"
+                    },
+                    "stringValue": {
+                        "type": "string"
+                    },
+                    "numericValue": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                }
+            },
+            "AttributeDescriptionDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean",
+                        "deprecated": true
+                    },
+                    "validations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "MatcherIdDto": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string",
+                        "description": "Name of the matching scheme"
+                    },
+                    "project": {
+                        "type": "string",
+                        "description": "(Optional) Project name where this scheme is used"
+                    }
+                },
+                "description": "ID of an matching scheme"
+            },
+            "MatchingDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/MatcherIdDto"
+                    },
+                    "validation": {
+                        "$ref": "#/components/schemas/RecordRequirementsDto"
+                    },
+                    "config": {
+                        "type": "string",
+                        "description": "Configuration / parameters to build the matcher"
+                    },
+                    "classifierDescription": {
+                        "type": "string",
+                        "description": "Description of the classifier"
+                    }
+                },
+                "description": "Description of a matching scheme"
+            },
+            "RecordRequirementsDto": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string"
+                    },
+                    "supportedEncodingMethods": {
+                        "type": "array",
+                        "description": "List of encoding methods that can be matched with this scheme",
+                        "items": {
+                            "type": "string",
+                            "description": "List of encoding methods that can be matched with this scheme"
+                        }
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AttributeDescriptionDto"
+                        }
+                    }
+                },
+                "description": "Description of requirements for this scheme"
+            },
+            "SearchResultDto": {
+                "type": "object",
+                "properties": {
+                    "queryId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "matches": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SearchResultEntryDto"
+                        }
+                    }
+                }
+            },
+            "SearchResultEntryDto": {
+                "type": "object",
+                "properties": {
+                    "foundId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "similarity": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                }
+            },
+            "DatasetDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "plaintextDatasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "datasetName": {
+                        "type": "string"
+                    }
+                }
+            },
+            "MatcherUpdateRequest": {
+                "type": "object",
+                "properties": {
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "NEW_IMPROVED",
+                            "UPPER_IMPROVED",
+                            "IMPROVED",
+                            "CR_ONLY"
+                        ]
+                    }
+                }
+            },
+            "BatchMatchProjectExecutionDto": {
+                "type": "object",
+                "properties": {
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "fromState": {
+                        "type": "string",
+                        "enum": [
+                            "COLLECTING",
+                            "BLOCKING",
+                            "LINKING",
+                            "CLASSIFICATION",
+                            "POSTPROCESSING",
+                            "CLUSTERING",
+                            "DONE"
+                        ]
+                    },
+                    "toState": {
+                        "type": "string",
+                        "enum": [
+                            "COLLECTING",
+                            "BLOCKING",
+                            "LINKING",
+                            "CLASSIFICATION",
+                            "POSTPROCESSING",
+                            "CLUSTERING",
+                            "DONE"
+                        ]
+                    }
+                }
+            },
+            "BatchMatchProjectDto": {
+                "type": "object",
+                "properties": {
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "lastUpdate": {
+                        "type": "string"
+                    },
+                    "method": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "interactive": {
+                        "type": "boolean"
+                    },
+                    "configs": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "currentState": {
+                        "type": "string"
+                    },
+                    "phases": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/BatchMatchProjectPhase"
+                        }
+                    }
+                }
+            },
+            "BatchMatchProjectPhase": {
+                "type": "object",
+                "properties": {
+                    "phaseProgress": {
+                        "$ref": "#/components/schemas/PhaseProgress"
+                    },
+                    "reportGroups": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/ReportGroup"
+                        }
+                    }
+                }
+            },
+            "PhaseProgress": {
+                "type": "object",
+                "properties": {
+                    "done": {
+                        "type": "boolean"
+                    },
+                    "progress": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Report": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "TEXT",
+                            "TABLE"
+                        ]
+                    },
+                    "report": {
+                        "type": "string"
+                    },
+                    "table": {
+                        "$ref": "#/components/schemas/SerializableTable"
+                    }
+                }
+            },
+            "ReportGroup": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "reports": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/Report"
+                        }
+                    }
+                }
+            },
+            "SerializableTable": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "header": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "MatcherTrainingsRequest": {
+                "type": "object",
+                "properties": {
+                    "matcherId": {
+                        "$ref": "#/components/schemas/MatcherIdDto"
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "minSimilarity": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "maxSimilarity": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                }
+            },
+            "GroundTruthDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "recordIdPairs": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordIdPairDto"
+                        }
+                    }
+                },
+                "description": "Ground truth links of a dataset"
+            },
+            "RecordIdPairDto": {
+                "type": "object",
+                "properties": {
+                    "leftRecordId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "rightRecordId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "label": {
+                        "type": "string",
+                        "enum": [
+                            "TRUE_MATCH",
+                            "TRUE_NON_MATCH"
+                        ]
+                    }
+                }
+            },
+            "BatchMatchRequestDto": {
+                "type": "object",
+                "properties": {
+                    "records": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordDto"
+                        }
+                    },
+                    "method": {
+                        "type": "string"
+                    }
+                }
+            },
+            "MatchResultDto": {
+                "type": "object",
+                "properties": {
+                    "records": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordDto"
+                        }
+                    },
+                    "recordIds": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordIdDto"
+                        }
+                    },
+                    "recordPairs": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordPairDto"
+                        }
+                    }
+                }
+            },
+            "ClusteringRequestDto": {
+                "type": "object",
+                "properties": {
+                    "recordPairs": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordPairDto"
+                        }
+                    },
+                    "method": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AnalysisRequestDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "AnalysisResultDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "reportGroups": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/ReportGroup"
+                        }
+                    }
+                }
+            },
+            "ResultRequest": {
+                "type": "object",
+                "properties": {
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "pairProperties": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "MatchResultAnalysisRequestDto": {
+                "type": "object",
+                "properties": {
+                    "analysisRequest": {
+                        "$ref": "#/components/schemas/AnalysisRequestDto"
+                    },
+                    "matchResult": {
+                        "$ref": "#/components/schemas/MatchResultDto"
+                    }
+                }
+            },
+            "RecordEncodingWishDto": {
+                "type": "object",
+                "properties": {
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "recordSecret": {
+                        "type": "string"
+                    },
+                    "orderId": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "btw2025-reproducibility"
+version = "0.1.0"
+authors = ["Florens Rohde <florens.rohde@uni-leipzig.de>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pandas = "^2.2.3"
+plotly = "^5.24.1"
+plotly-express = "^0.4.1"
+matplotlib = "^3.9.2"
+seaborn = "^0.13.2"
+pprl-data-owner-service-api-client = {path = "api/pprl-data-owner-service-api-client"}
+pprl-linkage-unit-service-api-client = {path = "api/pprl-linkage-unit-service-api-client"}
+pprl-protocol-manager-service-api-client = {path = "api/pprl-protocol-manager-service-api-client"}
+kaleido = "0.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

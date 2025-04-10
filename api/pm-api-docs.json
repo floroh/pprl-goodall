@@ -1,0 +1,604 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "PPRL Protocol Manager Service API",
+        "description": "Protocol manager service for privacy-preserving record linkage",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        },
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8085",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "PPRL protocol manager",
+            "description": "Manage communication between PPRL services"
+        },
+        {
+            "name": "Data Owner Preparation",
+            "description": "Adding plaintext dataset, configurations etc. to the Data Owner Service"
+        }
+    ],
+    "paths": {
+        "/protocol/multi-layer": {
+            "put": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Update a new multilayer protocol definition",
+                "operationId": "updateMultiLayerProtocol",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultiLayerProtocol"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MultiLayerProtocol"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Create a new multilayer protocol definition",
+                "operationId": "createMultiLayerProtocol",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultiLayerProtocol"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MultiLayerProtocol"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/transfer/dataset": {
+            "post": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Transfer an encoded dataset",
+                "operationId": "transferEncoded",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodedTransferRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/multi-layer/skip/{protocolId}": {
+            "post": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Skip next step of a multilayer protocol",
+                "operationId": "skipStepOfMultiLayerProtocol",
+                "parameters": [
+                    {
+                        "name": "protocolId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MultiLayerProtocol"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/multi-layer/run": {
+            "post": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Run a multilayer protocol",
+                "operationId": "runMultiLayerProtocol",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProtocolExecutionDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MultiLayerProtocol"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/data-owner/record": {
+            "post": {
+                "tags": [
+                    "Data Owner Preparation"
+                ],
+                "summary": "Insert dataset from csv file",
+                "operationId": "insertFromCsv",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DatasetCsvDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/multi-layer/{protocolId}": {
+            "get": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Get a multilayer protocol definition",
+                "operationId": "getMultiLayerProtocol",
+                "parameters": [
+                    {
+                        "name": "protocolId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MultiLayerProtocol"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Delete a new multilayer protocol",
+                "operationId": "deleteMultiLayerProtocol",
+                "parameters": [
+                    {
+                        "name": "protocolId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/protocol/multi-layer/findAll": {
+            "get": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Get all multilayer protocol definitions",
+                "operationId": "findAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MultiLayerProtocol"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/multi-layer/example/{protocolType}": {
+            "get": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Get an example multilayer protocol definition",
+                "operationId": "getExampleMultiLayerProtocol",
+                "parameters": [
+                    {
+                        "name": "protocolType",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MultiLayerProtocol"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/protocol/multi-layer/all": {
+            "delete": {
+                "tags": [
+                    "PPRL protocol manager"
+                ],
+                "summary": "Delete all protocols",
+                "operationId": "deleteAll",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Layer": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "matcherMethod": {
+                        "type": "string"
+                    },
+                    "batchSizeConfig": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    "maxBatches": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "encodingMethod": {
+                        "type": "string"
+                    },
+                    "updateMatcher": {
+                        "type": "boolean"
+                    },
+                    "updateType": {
+                        "type": "string",
+                        "enum": [
+                            "NEW_IMPROVED",
+                            "UPPER_IMPROVED",
+                            "IMPROVED",
+                            "CR_ONLY"
+                        ]
+                    },
+                    "initialThreshold": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "budget": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "errorRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "batchSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "currentBatch": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "numberOfReviews": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "active": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "MultiLayerProtocol": {
+                "type": "object",
+                "properties": {
+                    "protocolId": {
+                        "type": "string"
+                    },
+                    "layers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Layer"
+                        }
+                    },
+                    "plaintextDatasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "initialDatasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lastUpdate": {
+                        "type": "string"
+                    },
+                    "stepHistory": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProcessingStep"
+                        }
+                    },
+                    "stepQueue": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProcessingStep"
+                        }
+                    }
+                }
+            },
+            "PhaseProgress": {
+                "type": "object",
+                "properties": {
+                    "done": {
+                        "type": "boolean"
+                    },
+                    "progress": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ProcessingStep": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "phaseProgress": {
+                        "$ref": "#/components/schemas/PhaseProgress"
+                    },
+                    "reportGroups": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/ReportGroup"
+                        }
+                    }
+                }
+            },
+            "Report": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "TEXT",
+                            "TABLE"
+                        ]
+                    },
+                    "report": {
+                        "type": "string"
+                    },
+                    "table": {
+                        "$ref": "#/components/schemas/SerializableTable"
+                    }
+                }
+            },
+            "ReportGroup": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "reports": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/Report"
+                        }
+                    }
+                }
+            },
+            "SerializableTable": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "header": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "EncodedTransferRequestDto": {
+                "required": [
+                    "encoding"
+                ],
+                "type": "object",
+                "properties": {
+                    "dataOwnerDatasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "encoding": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    }
+                }
+            },
+            "EncodingIdDto": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string",
+                        "description": "Name of the encoding scheme"
+                    },
+                    "project": {
+                        "type": "string",
+                        "description": "Unique name of the record-linkage project"
+                    }
+                },
+                "description": "ID of an encoding scheme"
+            },
+            "ProtocolExecutionDto": {
+                "type": "object",
+                "properties": {
+                    "protocolId": {
+                        "type": "string"
+                    },
+                    "numberOfSteps": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "stepToStop": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DatasetCsvDto": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            }
+        }
+    }
+}
