@@ -1,0 +1,12 @@
+[server]
+port = 8501
+runOnSave = false
+enableStaticServing = true
+
+[browser]
+# Whether to send usage statistics to Streamlit.
+gatherUsageStats = false
+
+# Custom theme
+[theme]
+primaryColor = "#080"

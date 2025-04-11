@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "pprl-goodall"
+version = "0.1.0"
+description = ""
+authors = ["Florens Rohde <florens.rohde@uni-leipzig.de>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12.0"
+pandas = "^2.2.3"
+streamlit = "1.43.2"
+plotly = "^5.24.1"
+plotly-express = "^0.4.1"
+matplotlib = "^3.9.2"
+prefect = "^3.0.11"
+pprl-data-owner-service-api-client = {path = "api/pprl-data-owner-service-api-client"}
+pprl-linkage-unit-service-api-client = {path = "api/pprl-linkage-unit-service-api-client"}
+pprl-protocol-manager-service-api-client = {path = "api/pprl-protocol-manager-service-api-client"}
+shortuuid = "^1.0.11"
+scipy = "^1.14.1"
+jsonpath-ng = "^1.7.0"
+ipywidgets = "^8.1.5"
+seaborn = "^0.13.2"
+ruff = "^0.7.1"
+kaleido = "0.2.1"
+st-link-analysis = "^0.3.0"
+jellyfish = "^1.1.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+# Same as Black.
+line-length = 88
+indent-width = 4
+exclude = ["api/*"]
+
+target-version = "py310"
+
+[tool.ruff.lint]
+ignore = ["W191", "E111", "E114", "E117", "D206", "D300", "Q000", "Q001", "Q002", "Q003", "COM812", "COM819", "ISC001", "ISC002", "RET504"]
+select = ["E", "F"]
+#select = ["B", "C", "E", "F", "W", "B", "I", "D", "UP", "A", "C4", "T10", "ICN", "PIE", "PYI", "PT", "RET", "SIM", "ERA", "PD", "PGH", "PL", "NPY", "PERF", "RUF"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 18
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"

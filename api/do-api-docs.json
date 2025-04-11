@@ -1,0 +1,1446 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "PPRL Data Owner Service API",
+        "description": "Services for the data owners for privacy-preserving record linkage, including analysing and encoding of the local dataset",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        },
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Project secret management",
+            "description": "Manage project-specific secrets"
+        },
+        {
+            "name": "Dataset analysis",
+            "description": "Analyse records of a dataset"
+        },
+        {
+            "name": "Configuration management",
+            "description": "Manage encoding configurations"
+        },
+        {
+            "name": "Encoder",
+            "description": "Encode records from the database"
+        },
+        {
+            "name": "On-the-fly encoder",
+            "description": "Encode records provided with the request"
+        },
+        {
+            "name": "Dataset management",
+            "description": "Manage records in the database"
+        }
+    ],
+    "paths": {
+        "/secret/": {
+            "put": {
+                "tags": [
+                    "Project secret management"
+                ],
+                "summary": "Override a secret of a project",
+                "operationId": "update",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SecretDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Project secret management"
+                ],
+                "summary": "Add a secret for a project",
+                "operationId": "add",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SecretDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Project secret management"
+                ],
+                "summary": "Remove a secret of a project",
+                "operationId": "remove",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/record": {
+            "put": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Update an existing record in the database",
+                "operationId": "update_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordIdDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Add a record to the database",
+                "operationId": "insert",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordIdDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/": {
+            "put": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Override an existing configuration",
+                "operationId": "update_2",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodingDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Add a configuration",
+                "operationId": "add_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodingDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Remove a configuration",
+                "operationId": "remove_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodingIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/record/{uniqueId}/encode": {
+            "post": {
+                "tags": [
+                    "Encoder"
+                ],
+                "summary": "Encode a persisted record",
+                "operationId": "encode",
+                "parameters": [
+                    {
+                        "name": "uniqueId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodingRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/findBySource/{idDataset}": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve a persisted record by source",
+                "operationId": "findByDatasetAndSource",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/findByRecordId/{idDataset}": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve a persisted record by its record id (source + local)",
+                "operationId": "findByRecordId",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/findByIds": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve multiple persisted records",
+                "operationId": "findByUniqueIds",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/encode-multiple": {
+            "post": {
+                "tags": [
+                    "Encoder"
+                ],
+                "summary": "Bundled encoding requests for multiple persisted records",
+                "operationId": "encodeMultiple",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/EncodingRetrievalRequestDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/encode-multiple-same": {
+            "post": {
+                "tags": [
+                    "Encoder"
+                ],
+                "summary": "Encode multiple persisted records with the same encoding",
+                "operationId": "encodeMultipleSame",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultiRecordEncodingRetrievalRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/datasets": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get available dataset descriptions, optionally filtered by plaintextDatasetId",
+                "operationId": "getDatasetDescriptions",
+                "parameters": [
+                    {
+                        "name": "plaintextDatasetId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DatasetDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Add a dataset description",
+                "operationId": "addDatasetDescription",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DatasetDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DatasetDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/batch": {
+            "post": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Add multiple records to the database",
+                "operationId": "insertBatch",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordIdDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/encode": {
+            "post": {
+                "tags": [
+                    "On-the-fly encoder"
+                ],
+                "summary": "Encode a single record",
+                "operationId": "encode_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodingRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/encode-multiple-same": {
+            "post": {
+                "tags": [
+                    "On-the-fly encoder"
+                ],
+                "summary": "Encode multiple records with the same encoding",
+                "operationId": "encodeMultipleSame_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultiRecordEncodingRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/findById": {
+            "post": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Get the configuration by its ID",
+                "operationId": "getEncoding",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodingIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EncodingDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/run": {
+            "post": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Run a specific analysis type",
+                "operationId": "runAnalysis",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnalysisRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AnalysisResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/runValidation": {
+            "post": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Run a specific analysis type",
+                "operationId": "runValidationAnalysis",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnalysisRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AnalysisResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/secret/findAll": {
+            "get": {
+                "tags": [
+                    "Project secret management"
+                ],
+                "summary": "Get a list of all projects that are registered with a secret",
+                "operationId": "getProjects",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/{uniqueId}": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Retrieve a persisted record",
+                "operationId": "findByUniqueId",
+                "parameters": [
+                    {
+                        "name": "uniqueId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/{idDataset}/count": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get the number of records in the database",
+                "operationId": "count",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/{idDataset}/all": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get all records from the database",
+                "operationId": "getAll",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": -1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Clear the record database",
+                "operationId": "deleteAll",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/record/datasets/{idDataset}": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get dataset description",
+                "operationId": "getDatasetDescription",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DatasetDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Delete dataset",
+                "operationId": "deleteDataset",
+                "parameters": [
+                    {
+                        "name": "idDataset",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/record/datasets/ids": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Get available dataset ids",
+                "operationId": "getDatasetIds",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/record/compare/{idDataset0}/{idDataset1}": {
+            "get": {
+                "tags": [
+                    "Dataset management"
+                ],
+                "summary": "Compare dataset",
+                "operationId": "compareDatasets",
+                "parameters": [
+                    {
+                        "name": "idDataset0",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "idDataset1",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/example": {
+            "get": {
+                "tags": [
+                    "example-controller"
+                ],
+                "operationId": "example",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/findAll": {
+            "get": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Get a list of all configuration IDs",
+                "operationId": "getConfigs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/EncodingIdDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/findAllRequirements": {
+            "get": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Get descriptions of the requirements of all encoding methods",
+                "operationId": "getEncodingMethodRequirements",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordRequirementsDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/findAll": {
+            "get": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get a list of all supported analysis types",
+                "operationId": "getAnalysisTypes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "SecretDto": {
+                "required": [
+                    "project",
+                    "secret"
+                ],
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Unique name of the record-linkage project"
+                    },
+                    "secret": {
+                        "type": "string",
+                        "description": "Secret value"
+                    }
+                },
+                "description": "Project-specific secret necessary to create unique encodings per project, that is is only known to the data owners"
+            },
+            "AttributeDto": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EncodingIdDto": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string",
+                        "description": "Name of the encoding scheme"
+                    },
+                    "project": {
+                        "type": "string",
+                        "description": "Unique name of the record-linkage project"
+                    }
+                },
+                "description": "ID of an encoding scheme"
+            },
+            "RecordDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/AttributeDto"
+                        }
+                    }
+                }
+            },
+            "RecordIdDto": {
+                "type": "object",
+                "properties": {
+                    "unique": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "local": {
+                        "type": "string"
+                    },
+                    "global": {
+                        "type": "string"
+                    },
+                    "blocks": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "AttributeDescriptionDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean",
+                        "deprecated": true
+                    },
+                    "validations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "EncodingDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "validation": {
+                        "$ref": "#/components/schemas/RecordRequirementsDto"
+                    },
+                    "config": {
+                        "type": "string",
+                        "description": "Configuration / parameters to build the encoder"
+                    }
+                },
+                "description": "Description of an encoding scheme"
+            },
+            "RecordRequirementsDto": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string"
+                    },
+                    "supportedEncodingMethods": {
+                        "type": "array",
+                        "description": "List of encoding methods that can be matched with this scheme",
+                        "items": {
+                            "type": "string",
+                            "description": "List of encoding methods that can be matched with this scheme"
+                        }
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AttributeDescriptionDto"
+                        }
+                    }
+                },
+                "description": "Description of requirements for this scheme"
+            },
+            "EncodingRequestDto": {
+                "required": [
+                    "encodingId"
+                ],
+                "type": "object",
+                "properties": {
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "record": {
+                        "$ref": "#/components/schemas/RecordDto"
+                    },
+                    "recordSecret": {
+                        "type": "string"
+                    }
+                },
+                "description": "Request for encoding a single record that is included in the request."
+            },
+            "EncodingRetrievalRequestDto": {
+                "required": [
+                    "encodingId"
+                ],
+                "type": "object",
+                "properties": {
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "recordSecret": {
+                        "type": "string"
+                    }
+                },
+                "description": "Request description for encoding a single record. The record itself is not part of the request, but retrieved from the database using its id."
+            },
+            "MultiRecordEncodingRetrievalRequestDto": {
+                "type": "object",
+                "properties": {
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "recordIds": {
+                        "type": "array",
+                        "description": "List of record ids to encode. If empty, all records of the dataset are encoded.",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordIdDto"
+                        }
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "description": "Request description for encoding multiple records from the same dataset with the same encoding. No record-specific secret is required or possible."
+            },
+            "DatasetDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "plaintextDatasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "datasetName": {
+                        "type": "string"
+                    }
+                }
+            },
+            "MultiRecordEncodingRequestDto": {
+                "type": "object",
+                "properties": {
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "records": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordDto"
+                        }
+                    }
+                },
+                "description": "Request for encoding multiple records using the same method. The records are included in the request."
+            },
+            "AnalysisRequestDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "AnalysisResultDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "reportGroups": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/ReportGroup"
+                        }
+                    }
+                }
+            },
+            "Report": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "TEXT",
+                            "TABLE"
+                        ]
+                    },
+                    "report": {
+                        "type": "string"
+                    },
+                    "table": {
+                        "$ref": "#/components/schemas/SerializableTable"
+                    }
+                }
+            },
+            "ReportGroup": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "reports": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/Report"
+                        }
+                    }
+                }
+            },
+            "SerializableTable": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "header": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
