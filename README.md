@@ -8,6 +8,23 @@ The demonstration is based on the protocol introduced in
 _"Multi-Layer Privacy-Preserving Record Linkage with Clerical Review based on gradual information disclosure"_
 by Florens Rohde, Victor Christen, Martin Franke and Erhard Rahm ([Paper](https://doi.org/10.18420/BTW2025-18)).
 
+If you use the clerical review workflows, please cite our work:
+```tex
+@inproceedings{Rohde2025securematch,
+author = {Rohde, Florens and Christen, Victor and Rahm, Erhard},
+title = {SecUREmatch: Integrating Clerical Review in Privacy-Preserving Record Linkage},
+year = {2025},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+doi = {10.1145/3722212.3725131},
+booktitle = {Companion of the 2025 International Conference on Management of Data},
+pages = {219–222},
+numpages = {4},
+location = {Berlin, Germany},
+series = {SIGMOD/PODS '25}
+}
+```
+
 ## Getting started
 ### Prerequisites
 - Python 3.12
