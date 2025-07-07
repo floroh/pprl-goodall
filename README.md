@@ -3,6 +3,21 @@ Reproducibility information for Paper
 "Multi-Layer Privacy-Preserving Record Linkage with Clerical Review based on gradual information disclosure"
 by Florens Rohde, Victor Christen, Martin Franke, Erhard Rahm
 
+Please use the following citation:
+```tex
+@inproceedings{Rohde2025multi,
+title={{Multi-Layer Privacy-Preserving Record Linkage} with {Clerical Review} based on gradual information disclosure},
+author={Rohde, Florens and Christen, Victor and Franke, Martin and Rahm, Erhard},
+booktitle = {BTW 2025},
+address = {Bamberg, Germany},
+year = {2025},
+doi = {10.18420/BTW2025-18},
+publisher = {Gesellschaft für Informatik e.V.},
+}
+```
+
+We developed an interactive demo for the protocol, please check the [paper](https://dl.acm.org/doi/10.1145/3722212.3725131) and the [code](https://github.com/floroh/pprl-goodall/tree/sigmod-2025).
+
 ## Setup
 ### Hardware requirements
 - nothing special, but high disk read and write speed is beneficial for the database operations
