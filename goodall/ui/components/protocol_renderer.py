@@ -4,48 +4,78 @@ from typing import Callable
 
 import pandas as pd
 import streamlit as st
-from PIL.ImageOps import scale
-from numpy.random import get_state
 from pprl_linkage_unit_service_api_client import BatchMatchProjectDto
-from pprl_protocol_manager_service_api_client import MultiLayerProtocol, Layer, \
-    ProcessingStep
+from pprl_protocol_manager_service_api_client import (
+    MultiLayerProtocol,
+    Layer,
+    ProcessingStep,
+)
 from streamlit import session_state as sts
 
+import goodall.ui.components.api.lu_api_streamlit
 from goodall.api_helper import pm_api, lu_api
-from goodall.api_helper.lu_api import get_record_pairs_as_dataframe
-from goodall.api_helper.parser import parse_serialized_table_to_dataframe, \
-    get_project_quality_results
+from goodall.ui.components.api.lu_api_streamlit import (
+    get_record_pairs_as_dataframe_cached,
+)
+from goodall.api_helper.parser import (
+    parse_serialized_table_to_dataframe,
+    get_project_quality_results, process_dataset_dataframe,
+    get_best_result_and_threshold_from_quality_overview,
+)
 from goodall.api_helper.pprl_clients import Service
-from goodall.result_analysis.pair_evaluation import combine_FP, combine_MatchGrade, \
-    get_type_stats_by_probability
-from goodall.ui.PPRL_Services_UI import SELECTED_PROTOCOL_ID
+from goodall.result_analysis.pair_evaluation import combine_FP, combine_MatchGrade
+from goodall.ui.constants import SELECTED_PROTOCOL_ID
 from goodall.ui.components.clerical_review_renderer import ClericalReviewRenderer
 from goodall.ui.components.comparison_renderer import subsubheader
-from goodall.ui.components.datasets import get_ppcr_privacy_analysis, \
-    get_dataset_privacy_analysis, get_dataset_analysis_result, \
-    process_dataset_dataframe, get_records_as_dataframe, order_columns, order_rows, \
-    add_reference_results
-from goodall.ui.components.plotting import render_quality_development, plot_gini, \
-    plot_availability
-from goodall.ui.components.project_comparison import get_merged_record_pair_df, \
-    count_type_changes, compute_change_statistics, plot_type_correspondences, \
-    plot_type_changes, plot_match_grade_correspondences
+from goodall.ui.components.datasets import (
+    get_dataset_privacy_analysis,
+    get_dataset_analysis_result_cached,
+    get_records_as_dataframe_cached,
+)
+from goodall.ui.components.plotting import (
+    render_quality_development,
+    plot_gini,
+    plot_availability,
+)
+from goodall.ui.components.project_comparison import (
+    get_merged_record_pair_df,
+    compute_change_statistics,
+    plot_type_correspondences,
+    plot_match_grade_correspondences,
+)
 from goodall.ui.components.projects import render_report
 from goodall.ui.components.protocol_helper import get_current_classifier_threshold
-from goodall.ui.components.protocols import get_layer_color, render_report_groups, \
-    clean_labeling_states
+from goodall.ui.components.protocols import (
+    get_layer_color,
+    render_report_groups,
+    clean_labeling_states,
+)
 from goodall.ui.components.rbf_adaption_renderer import RecordLevelLayerAdaptionRenderer
-from goodall.ui.streamlit_utils import get_state_or_default, god, \
-    state_exists_and_equals, state_exists_and_is_in, del_state_if_exists
+from goodall.ui.streamlit_utils import (
+    get_state_or_default,
+    god,
+    state_exists_and_equals,
+    state_exists_and_is_in,
+    del_state_if_exists,
+)
+
+STEP_TYPE_DISPLAY_NAMES = {
+    "RECLASSIFY_PAIRS": "Reclassify",
+    "UPDATE_SUBPROJECT_WITH_UNCERTAIN_LINKS": "Fetch uncertain links and reencoded records",
+    # noqa: E501
+    "DETERMINE_UNCERTAIN_LINKS": "Determine uncertain links",
+    "UPDATE_MATCHER": "Update classification model",
+    "REPORT_PAIRS": "Report reviewed predictions",
+    "RUN_INITIAL_LINKAGE": "Run initial linkage",
+    "TRANSFER_ENCODED_DATASET": "Transfer initial encoded dataset",
+}
 
 
 def add_vertical_spacer(height: str = "50px"):
-    st.markdown(f"<div style='height: {height};'></div>",
-                unsafe_allow_html=True)
+    st.markdown(f"<div style='height: {height};'></div>", unsafe_allow_html=True)
 
 
 class ProtocolRenderer:
-
     def __init__(self, protocol: MultiLayerProtocol):
         self.protocol = protocol
         self.projects = {}
@@ -67,8 +97,7 @@ class ProtocolRenderer:
 
     def run_next_steps(self, step_count: int = 1):
         for i in range(step_count):
-            self.protocol = pm_api.run_protocol_single_step(
-                sts[SELECTED_PROTOCOL_ID])
+            self.protocol = pm_api.run_protocol_single_step(sts[SELECTED_PROTOCOL_ID])
 
     def get_project(self, layer) -> BatchMatchProjectDto:
         if layer.name not in self.projects:
@@ -86,6 +115,7 @@ class ProtocolRenderer:
                         add_vertical_spacer(height="100px")
 
                         if is_completed:
+                            sts["stop_auto_continue"] = False
                             self.protocol = renderer.protocol
                             self.update_protocol()
                             self.run_next_steps()
@@ -103,12 +133,18 @@ class ProtocolRenderer:
 
     def render_protocol_layers_full(self):
         self.render_protocol_layers(self.render_protocol_layer_header)
-        self.render_protocol_layers(self.render_protocol_layer_inspection,
-                                    "Inspect data")
-        self.render_protocol_layers(self.render_protocol_layer_configuration, "Configuration")
-        self.render_protocol_layers(self.render_protocol_layer_privacy, "Privacy measures")
-        self.render_protocol_layers(self.render_protocol_layer_quality,
-                                    "Quality measures")
+        self.render_protocol_layers(
+            self.render_protocol_layer_inspection, "Inspect data"
+        )
+        self.render_protocol_layers(
+            self.render_protocol_layer_configuration, "Configuration"
+        )
+        self.render_protocol_layers(
+            self.render_protocol_layer_privacy, "Privacy measures"
+        )
+        self.render_protocol_layers(
+            self.render_protocol_layer_quality, "Quality measures"
+        )
         self.render_protocol_layers_steps()
         # add_vertical_spacer(height="100px")
         # st.divider()
@@ -116,31 +152,39 @@ class ProtocolRenderer:
             self.render_protocol_layers(self.render_protocol_layer_description)
 
     def render_protocol_layers_steps(self, joined_list: bool = True):
+        short_mode = st.sidebar.toggle(label="Hide step details")
         if joined_list:
             with st.expander("Processing steps", expanded=True):
                 if self.protocol.step_queue is not None:
                     for step in list(reversed(self.protocol.step_queue)):
-                        self.render_protocol_layers_step(step)
+                        self.render_protocol_layers_step(step, short_mode=short_mode)
                 else:
                     st.markdown(
-                        "<p style='text-align: center; font-size: small;'>Nothing planned yet</p>",
-                        unsafe_allow_html=True)
+                        "<p style='text-align: center; font-size: small;'>"
+                        "Nothing planned yet</p>",
+                        unsafe_allow_html=True,
+                    )
                 st.markdown(
-                    "<div style='text-align: center; font-size: small; color: gray;'>Upcoming</div>",
-                    unsafe_allow_html=True)
+                    "<div style='text-align: center; font-size: small; color: gray;'>"
+                    "Upcoming</div>",
+                    unsafe_allow_html=True,
+                )
                 st.markdown(
                     """
-                    <hr style="margin: 5px 0; border: none; border-top: 1px solid #ccc;" />
+                    <hr style="margin: 5px 0; border: none;
+                    border-top: 1px solid #ccc;" />
                     """,
                     unsafe_allow_html=True,
                 )
                 st.markdown(
-                    "<div style='text-align: center; font-size: small; color: gray;'>Previous</div>",
-                    unsafe_allow_html=True)
+                    "<div style='text-align: center; font-size: small; color: gray;'>"
+                    "Previous</div>",
+                    unsafe_allow_html=True,
+                )
 
                 if self.protocol.step_history is not None:
                     for step in list(reversed(self.protocol.step_history)):
-                        self.render_protocol_layers_step(step)
+                        self.render_protocol_layers_step(step, short_mode=short_mode)
         else:
             with st.container(border=True):
                 st.text("Upcoming")
@@ -153,17 +197,27 @@ class ProtocolRenderer:
                     for step in list(reversed(self.protocol.step_history)):
                         self.render_protocol_layers_step(step)
 
-    def render_protocol_layers_step(self, step: ProcessingStep):
+    def render_protocol_layers_step(
+            self, step: ProcessingStep, short_mode: bool = False
+    ):
         col1, col2, col3 = st.columns(3)
         with col1:
-            self.render_processing_step(step, with_layer_name=False, only_layer="RBF")
+            self.render_processing_step(
+                step, with_layer_name=False, only_layer="RBF", short_mode=short_mode
+            )
         with col2:
-            self.render_processing_step(step, with_layer_name=False, only_layer="ABF")
+            self.render_processing_step(
+                step, with_layer_name=False, only_layer="ABF", short_mode=short_mode
+            )
         with col3:
-            self.render_processing_step(step, with_layer_name=False, only_layer="PPCR")
+            self.render_processing_step(
+                step, with_layer_name=False, only_layer="PPCR", short_mode=short_mode
+            )
 
-    def render_protocol_layers(self, layer_renderer: Callable[[Layer], None],
-                               expander_title: str | None = None):
+    def render_protocol_layers(
+            self, layer_renderer: Callable[[Layer], None],
+            expander_title: str | None = None
+    ):
         # st.subheader("Linkage units")
         if expander_title is not None:
             with st.expander(expander_title):
@@ -194,9 +248,11 @@ class ProtocolRenderer:
         # with st.expander("Inspect data"):
         show_records = st.toggle("Show records", key=f"show_record{layer.name}")
         if show_records:
-            df = get_records_as_dataframe(Service.Linkage_unit,
-                                          self.get_project(layer).dataset_id,
-                                          get_state_or_default("record_limit", 20))
+            df = get_records_as_dataframe_cached(
+                Service.Linkage_unit,
+                self.get_project(layer).dataset_id,
+                get_state_or_default("record_limit", 20),
+            )
             df = df.rename(columns=lambda col: col.replace("PLZ", "ZIP"))
             df = process_dataset_dataframe(df)
             # if layer.name == "RBF":
@@ -209,8 +265,9 @@ class ProtocolRenderer:
                 st.dataframe(df, hide_index=True)
         show_pairs = st.toggle("Show pairs", key=f"show_pairs{layer.name}")
         if show_pairs:
-            df = get_record_pairs_as_dataframe(self.get_project(layer).project_id,
-                                               [])
+            df = get_record_pairs_as_dataframe_cached(
+                self.get_project(layer).project_id, []
+            )
             if df.empty:
                 st.info("No pairs found.")
             else:
@@ -220,44 +277,48 @@ class ProtocolRenderer:
     def render_protocol_layer_privacy(self, layer: Layer):
         match layer.name:
             case "RBF":
-                df_privacy = get_dataset_privacy_analysis(layer.project_id,
-                                                          "AttributePrivacy",
-                                                          )
+                df_privacy = get_dataset_privacy_analysis(
+                    layer.project_id,
+                    "AttributePrivacy",
+                )
                 if not df_privacy.empty:
-                    st.plotly_chart(plot_gini(df_privacy,
-                                              y_limit = 0.4,
-                                              title="Gini Index of Record-level Bloom Filter")
-                                    , use_container_width=True)
+                    st.plotly_chart(
+                        plot_gini(
+                            df_privacy,
+                            y_limit=0.4,
+                            title="Gini Index of Record-level Bloom Filter",
+                        )
+                    )
                 pass
             case "ABF":
                 ref_dataset_id = self.protocol.plaintext_dataset_id + 100
-                df_privacy = get_dataset_privacy_analysis(layer.project_id,
-                                                          "AttributePrivacy",
-                                                          ref_dataset_id)
+                df_privacy = get_dataset_privacy_analysis(
+                    layer.project_id, "AttributePrivacy", ref_dataset_id
+                )
                 if not df_privacy.empty:
-                    df_avail = get_dataset_privacy_analysis(layer.project_id,
-                                                            "AttributeAvailability",
-                                                            ref_dataset_id)
-                    # st.plotly_chart(plot_availability(df_avail),
-                    #                 use_container_width=True)
+                    # df_avail = get_dataset_privacy_analysis(layer.project_id,
+                    #                                         "AttributeAvailability",
+                    #                                         ref_dataset_id)
+                    # st.plotly_chart(plot_availability(df_avail)
                     # st.dataframe(df_avail)
-                    st.plotly_chart(plot_gini(df_privacy), use_container_width=True)
+                    st.plotly_chart(plot_gini(df_privacy))
                     # st.dataframe(df_privacy)
             case "PPCR":
                 prj = self.get_project(self.get_layer_with_name("ABF"))
                 ref_dataset_id = prj.dataset_id
-                df_avail = get_dataset_privacy_analysis(layer.project_id,
-                                                        "AttributeAvailability",
-                                                        ref_dataset_id=ref_dataset_id)
+                df_avail = get_dataset_privacy_analysis(
+                    layer.project_id,
+                    "AttributeAvailability",
+                    ref_dataset_id=ref_dataset_id,
+                )
                 if not df_avail.empty:
-                    st.plotly_chart(plot_availability(df_avail),
-                                    use_container_width=True)
+                    st.plotly_chart(plot_availability(df_avail))
                     # st.dataframe(df_avail)
                     # btn_run_ppcr_privacy_analysis = st.button(
                     #     "Analyse k-Anonymity privacy")
                     # if btn_run_ppcr_privacy_analysis:
                     #     df_privacy = get_ppcr_privacy_analysis(layer.project_id,
-                    #                                            self.protocol.plaintext_dataset_id)
+                    #                                            self.protocol.plaintext_dataset_id)  # noqa: E501
                     #     st.dataframe(df_privacy)
 
     def render_protocol_layer_quality(self, layer: Layer):
@@ -272,7 +333,7 @@ class ProtocolRenderer:
                 if count == 0:
                     return
                 fig.update_layout(height=300)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig)
                 sts["ABF-count"] = count
             case "PPCR":
                 subsubheader("Prediction changes based on masked clerical review")
@@ -280,11 +341,11 @@ class ProtocolRenderer:
                 if count == 0:
                     return
                 sts["PPCR-count"] = count
-                abf_count = get_state_or_default("ABF-count", count)
-                scale_factor = float(count)/abf_count
+                # abf_count = get_state_or_default("ABF-count", count)
+                # scale_factor = float(count) / abf_count
                 fig.update_layout(height=100)
                 # fig.update_layout(height=int(600*scale_factor))
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig)
 
     def render_label_changes(self, layer):
         if layer.name == "RBF":
@@ -309,16 +370,16 @@ class ProtocolRenderer:
             stats = compute_change_statistics(dfM)
             # st.dataframe(stats, hide_index=True)
             fig = plot_type_correspondences(stats)
-            # st.plotly_chart(fig, use_container_width=True)
+            # st.plotly_chart(fig)
         else:
             stats = compute_change_statistics(dfM, "matchGrade")
             # st.dataframe(stats, hide_index=True)
             fig = plot_match_grade_correspondences(stats)
             # fig.update_layout(height=100)
-            # st.plotly_chart(fig, use_container_width=True)
+            # st.plotly_chart(fig)
         fig.update_layout(
             title=dict(text=""),  # Hide the title by setting it to an empty string
-            margin=dict(t=0, b=0)
+            margin=dict(t=0, b=0),
         )
         # fig.update_layout(
         #     title=dict(
@@ -355,16 +416,25 @@ class ProtocolRenderer:
         if self.protocol.layers[0].name != layer.name:
             if layer.max_batches is not None and layer.max_batches > 0:
                 _num_of_batches = god(layer.current_batch, 0)
-                st.progress(float(_num_of_batches) / layer.max_batches,
-                            text=get_colored_text(layer, f"Batch: {_num_of_batches}/{layer.max_batches}"))
-            # st.markdown(get_colored_text(layer, f"Batch: {god(layer.current_batch, 0)}/{layer.max_batches}"))
+                st.progress(
+                    float(_num_of_batches) / layer.max_batches,
+                    text=get_colored_text(
+                        layer, f"Batch: {_num_of_batches}/{layer.max_batches}"
+                    ),
+                )
             st.markdown(get_colored_text(layer, f"Batch size: {layer.batch_size}"))
             if layer.budget > 0:
                 _num_of_reviews = god(layer.number_of_reviews, 0)
-                st.progress(float(_num_of_reviews) / layer.budget,
-                            text=get_colored_text(layer, f"Budget: {_num_of_reviews}/{layer.budget}"))
+                st.progress(
+                    float(_num_of_reviews) / layer.budget,
+                    text=get_colored_text(
+                        layer, f"Budget: {_num_of_reviews}/{layer.budget}"
+                    ),
+                )
             else:
-                st.markdown(get_colored_text(layer, f"Budget: {layer.number_of_reviews}"))
+                st.markdown(
+                    get_colored_text(layer, f"Budget: {layer.number_of_reviews}")
+                )
 
         match layer.name:
             case "RBF":
@@ -388,19 +458,20 @@ class ProtocolRenderer:
         def get_optimal_threshold(protocol_renderer, layer: Layer) -> str:
             try:
                 prj = protocol_renderer.get_project(layer)
-                report = prj.phases["CLASSIFICATION"].report_groups[
-                    "Linkage quality evaluation"].reports[
-                    "Overview"]
-                df_report = parse_serialized_table_to_dataframe(
-                    report.table)
-                return protocol_renderer._get_best_threshold_from_quality_overview(
-                    df_report)
-            except Exception as e:
+                report = (
+                    prj.phases["CLASSIFICATION"]
+                    .report_groups["Linkage quality evaluation"]
+                    .reports["Overview"]
+                )
+                df_report = parse_serialized_table_to_dataframe(report.table)
+                _, thr = get_best_result_and_threshold_from_quality_overview(df_report)
+                return thr
+            except Exception:
                 return "?"
 
         try:
             current_threshold = get_current_classifier_threshold(layer)
-        except Exception as e:
+        except Exception:
             current_threshold = "?"
 
         if multi_line:
@@ -432,7 +503,7 @@ class ProtocolRenderer:
         df_quality_results = get_project_quality_results(project)
         if df_quality_results is None or df_quality_results.empty:
             return
-        options = ["Initial result", "Optimal threshold", "Attribute-level linkage"]
+        options = ["Initial result", "Optimal threshold", "Attr.-level linkage"]
         if layer.name != "RBF":
             options.remove("Optimal threshold")
         quality_comparison_mode = st.segmented_control(
@@ -440,34 +511,51 @@ class ProtocolRenderer:
         )
 
         colF1, colR, colP = st.columns(3)
-        f1 = df_quality_results.at[0, 'F1-score']
-        recall = df_quality_results.at[0, 'recall']
-        precision = df_quality_results.at[0, 'precision']
+        f1 = df_quality_results.at[0, "F1-score"]
+        recall = df_quality_results.at[0, "recall"]
+        precision = df_quality_results.at[0, "precision"]
 
         delta_f1 = None
         delta_recall = None
         delta_precision = None
         match quality_comparison_mode:
             case "Initial result":
-                df_reference_result = get_project_quality_results(project,
-                                                                  report_name="Improved links history")
+                df_reference_result = get_project_quality_results(
+                    project, report_name="Improved links history"
+                )
                 delta_f1 = f1 - df_reference_result.at[1, "F1-score"]
                 delta_recall = recall - df_reference_result.at[1, "recall"]
                 delta_precision = precision - df_reference_result.at[1, "precision"]
             case "Optimal threshold":
-                df_reference_result = get_project_quality_results(project,
-                                                                  report_name="Improved links history")
+                df_reference_result = get_project_quality_results(
+                    project, report_name="Improved links history"
+                )
                 delta_f1 = f1 - df_reference_result.at[0, "F1-score"]
                 delta_recall = recall - df_reference_result.at[0, "recall"]
                 delta_precision = precision - df_reference_result.at[0, "precision"]
+            case "Attr.-level linkage":
+                prj_id = None
+                match self.protocol.plaintext_dataset_id:
+                    case 2010:
+                        prj_id = "6859d622bb39764d5a968ab4"
+                    case 2012:
+                        prj_id = "6859cf6dbb39764d5a961b8a"
+                if prj_id is not None:
+                    df_reference_result = get_project_quality_results(
+                        lu_api.get_project(prj_id)
+                    )
+                    delta_f1 = f1 - df_reference_result.at[0, "F1-score"]
+                    delta_recall = recall - df_reference_result.at[0, "recall"]
+                    delta_precision = precision - df_reference_result.at[0, "precision"]
 
         def round_if_not_none(value, precision: int = 3):
             return value if value is None else round(value, precision)
 
         colF1.metric("F1-score", round(f1, 3), delta=round_if_not_none(delta_f1))
         colR.metric("Recall", round(recall, 3), delta=round_if_not_none(delta_recall))
-        colP.metric("Precision", round(precision, 3),
-                    delta=round_if_not_none(delta_precision))
+        colP.metric(
+            "Precision", round(precision, 3), delta=round_if_not_none(delta_precision)
+        )
 
     def render_project_layer_quality(self, layer: Layer):
         project_id = layer.project_id
@@ -479,32 +567,51 @@ class ProtocolRenderer:
                 phase = prj.phases["CLASSIFICATION"]
                 if state_exists_and_equals("knowledge_mode", "Evaluation"):
                     report = phase.report_groups["Linkage quality evaluation"].reports[
-                        "Improved links history"]
-                    render_report(report, is_expanded=True, double_column=False,
-                                  key_postfix=project_id)
+                        "Improved links history"
+                    ]
+                    render_report(
+                        report,
+                        is_expanded=True,
+                        double_column=False,
+                        key_postfix=project_id,
+                    )
                 # if state_exists_and_equals("mode.dev", False):
                 if state_exists_and_equals("knowledge_mode", "Evaluation"):
                     if layer.name == "RBF":
-                        report = \
-                            phase.report_groups["Linkage quality evaluation"].reports[
-                                "Thresholds"]
-                        render_report(report, is_expanded=True, double_column=False,
-                                      key_postfix=project_id)
+                        report = phase.report_groups[
+                            "Linkage quality evaluation"
+                        ].reports["Thresholds"]
+                        render_report(
+                            report,
+                            is_expanded=True,
+                            double_column=False,
+                            key_postfix=project_id,
+                        )
                     report = phase.report_groups["Record pairs"].reports[
-                        "Property counts"]
-                    render_report(report, is_expanded=True, double_column=False,
-                                  key_postfix=project_id)
+                        "Property counts"
+                    ]
+                    render_report(
+                        report,
+                        is_expanded=True,
+                        double_column=False,
+                        key_postfix=project_id,
+                    )
                 if state_exists_and_is_in("knowledge_mode", ["Enhanced", "Evaluation"]):
                     if layer.name == "RBF":
                         report = phase.report_groups["Record pairs"].reports[
-                            "Similarity distribution"]
-                        render_report(report, is_expanded=True, double_column=False,
-                                      key_postfix=project_id)
+                            "Similarity distribution"
+                        ]
+                        render_report(
+                            report,
+                            is_expanded=True,
+                            double_column=False,
+                            key_postfix=project_id,
+                        )
 
     def _get_best_threshold_from_quality_overview(self, df: pd.DataFrame):
-        for desc in df['Description']:
-            if desc.startswith('Best'):
-                match = re.search(r'\(([^)]+)\)', desc)
+        for desc in df["Description"]:
+            if desc.startswith("Best"):
+                match = re.search(r"\(([^)]+)\)", desc)
                 if match:
                     try:
                         return float(match.group(1))
@@ -527,8 +634,11 @@ class ProtocolRenderer:
     def next_is_clerical_review_step(self):
         if self.protocol.step_queue is not None and len(self.protocol.step_queue) > 0:
             next_step = self.protocol.step_queue[0]
-            if next_step.type == "RECLASSIFY_PAIRS" and 'projectId' in next_step.properties:
-                layer = self.get_layer_of_project_id(next_step.properties['projectId'])
+            if (
+                    next_step.type == "RECLASSIFY_PAIRS"
+                    and "projectId" in next_step.properties
+            ):
+                layer = self.get_layer_of_project_id(next_step.properties["projectId"])
                 if layer.name == "PPCR":
                     return True
         return False
@@ -536,16 +646,25 @@ class ProtocolRenderer:
     def next_is_threshold_adaption_step(self):
         if self.protocol.step_queue is not None and len(self.protocol.step_queue) > 0:
             next_step = self.protocol.step_queue[0]
-            if next_step.type == "RECLASSIFY_PAIRS" and 'projectId' in next_step.properties:
-                layer = self.get_layer_of_project_id(next_step.properties['projectId'])
+            if (
+                    next_step.type == "RECLASSIFY_PAIRS"
+                    and "projectId" in next_step.properties
+            ):
+                layer = self.get_layer_of_project_id(next_step.properties["projectId"])
                 if layer.name == "RBF":
                     return True
-        if self.protocol.step_history is not None and len(
-                self.protocol.step_history) > 0:
+        if (
+                self.protocol.step_history is not None
+                and len(self.protocol.step_history) > 0
+        ):
             previous_step = self.protocol.step_history[0]
-            if previous_step.type == "RUN_INITIAL_LINKAGE" and 'projectId' in previous_step.properties:
+            if (
+                    previous_step.type == "RUN_INITIAL_LINKAGE"
+                    and "projectId" in previous_step.properties
+            ):
                 layer = self.get_layer_of_project_id(
-                    previous_step.properties['projectId'])
+                    previous_step.properties["projectId"]
+                )
                 if layer.name == "RBF":
                     return True
         return False
@@ -553,24 +672,27 @@ class ProtocolRenderer:
     def rbf_classification_update_possible(self) -> bool:
         if self.protocol.step_queue is not None and len(self.protocol.step_queue) > 0:
             next_step = self.protocol.step_queue[0]
-            if ((next_step.type == "UPDATE_MATCHER"
-                 or next_step.type == "RECLASSIFY_PAIRS"
-                 or next_step.type == "DETERMINE_UNCERTAIN_LINKS")
-                    and 'projectId' in next_step.properties):
-                layer = self.get_layer_of_project_id(next_step.properties['projectId'])
+            if (
+                    next_step.type == "UPDATE_MATCHER"
+                    or next_step.type == "RECLASSIFY_PAIRS"
+                    or next_step.type == "DETERMINE_UNCERTAIN_LINKS"
+            ) and "projectId" in next_step.properties:
+                layer = self.get_layer_of_project_id(next_step.properties["projectId"])
                 if layer.name == "RBF":
                     return True
         return False
 
-    def render_protocol_steps_vertically(self,
-                                         show_steps: bool = True):
+    def render_protocol_steps_vertically(self, show_steps: bool = True):
         with st.container(border=True):
-            st.subheader("Protocol execution control")
+            st.text("Protocol execution control")
             if show_steps:
                 subsubheader("Next step")
                 if self.protocol.step_queue is not None:
                     for step in self.protocol.step_queue:
-                        self.render_processing_step(step, with_layer_name=False, )
+                        self.render_processing_step(
+                            step,
+                            with_layer_name=False,
+                        )
                 else:
                     st.text("Nothing yet")
                 # st.subheader("History")
@@ -583,42 +705,50 @@ class ProtocolRenderer:
             # if stop_auto_continue:
             #     sts["auto_continue_protocol"] = False
             auto_continue = st.toggle(
-                "Autocontinue", key="auto_continue_protocol", value=False,
-                disabled=stop_auto_continue
+                "Autocontinue",
+                key="auto_continue_protocol",
+                value=False,
+                # disabled=stop_auto_continue
             )
             manual_cr = st.toggle("Manual clerical review", key="manual_cr", value=True)
             # sts["manual_cr"] = manual_cr
             if self.get_layer_with_name("RBF") is not None:
-                manual_thr = st.toggle("Manual threshold adaption", key="manual_thr",
-                                       value=True)
+                manual_thr = st.toggle(
+                    "Manual threshold adaption", key="manual_thr", value=True
+                )
             else:
                 manual_thr = False
 
         with st.container(border=True):
-            st.subheader("Analysis settings")
-            evaluation_mode = st.toggle("Evaluation mode", value=get_state_or_default("knowledge_mode", "Simple")=="Evaluation", key="evaluation_mode")
+            st.text("Analysis settings")
+            evaluation_mode = st.toggle(
+                "Evaluation mode",
+                value=get_state_or_default("knowledge_mode", "Simple") == "Evaluation",
+                key="evaluation_mode",
+            )
             if evaluation_mode:
                 sts["knowledge_mode"] = "Evaluation"
             else:
                 sts["knowledge_mode"] = "Simple"
             # sts["knowledge_mode"] = st.selectbox("Knowledge mode",
-            #                                              ["Simple", "Evaluation"],
-            #                                              # ["Simple", "Enhanced", "Evaluation"],
-            #                                              index=1)
-            btn_clean_analysis_cache = st.button("Refresh",
-                                             key="clean_analysis_cache",
-                                             # on_change=get_dataset_analysis_result.clear()
-                                             )
+            #                                      ["Simple", "Evaluation"],
+            #                                      index=1)
+            btn_clean_analysis_cache = st.button(
+                "Refresh",
+                key="clean_analysis_cache",
+                # on_change=get_dataset_analysis_result.clear()
+            )
             if btn_clean_analysis_cache:
-                get_dataset_analysis_result.clear()
+                get_dataset_analysis_result_cached.clear()
                 get_merged_record_pair_df.clear()
-                lu_api.get_record_pairs.clear()
-                get_records_as_dataframe.clear()
+                goodall.ui.components.api.lu_api_streamlit.get_record_pairs_cached.clear()
+                get_records_as_dataframe_cached.clear()
                 st.rerun()
         # sts["manual_thr"] = manual_thr
         auto_delayed_rerun = auto_continue and not stop_auto_continue
-        seconds_to_wait = st.sidebar.slider("Auto run wait (s)", min_value=1,
-                                            max_value=10, value=2)
+        seconds_to_wait = st.sidebar.slider(
+            "Auto run wait (s)", min_value=1, max_value=10, value=2
+        )
         immediate_rerun = False
         if btn_next_step or auto_delayed_rerun:
             del_state_if_exists("stop_auto_continue")
@@ -630,9 +760,11 @@ class ProtocolRenderer:
             # if clean_analysis_cache:
             #     get_dataset_analysis_result.clear()
             #     get_merged_record_pair_df.clear()
-            if self.protocol.step_history is not None and \
-                    self.protocol.step_history[-1].type == "IDLE":
-                st.info(f"Stopped due to: IDLE")
+            if (
+                    self.protocol.step_history is not None
+                    and self.protocol.step_history[-1].type == "IDLE"
+            ):
+                st.info("Stopped due to: IDLE")
                 sts["stop_auto_continue"] = True
                 auto_delayed_rerun = False
             if self.next_is_clerical_review_step():
@@ -644,7 +776,7 @@ class ProtocolRenderer:
                 if manual_thr:
                     sts["stop_auto_continue"] = True
                     auto_delayed_rerun = False
-                    lu_api.get_record_pairs.clear()
+                    goodall.ui.components.api.lu_api_streamlit.get_record_pairs_cached.clear()
                     # immediate_rerun = True
             if auto_delayed_rerun:
                 wait_bar = st.progress(0, text="Starting next step...")
@@ -685,70 +817,75 @@ class ProtocolRenderer:
                     pm_api.run_protocol_single_step(sts[SELECTED_PROTOCOL_ID])
                     st.rerun()
 
-    def render_processing_step(self, step: ProcessingStep,
-                               with_layer_name: bool = True,
-                               only_layer: str | None = None,
-                               ):
+    def render_processing_step(
+            self,
+            step: ProcessingStep,
+            with_layer_name: bool = True,
+            only_layer: str | None = None,
+            short_mode: bool = False,
+    ):
         if step is not None:
             layer = None
-            if 'projectId' in step.properties:
-                layer = self.get_layer_of_project_id(step.properties['projectId'])
+            if "projectId" in step.properties:
+                layer = self.get_layer_of_project_id(step.properties["projectId"])
                 # st.text(layer.name + " " + only_layer)
                 if only_layer is not None and not only_layer == layer.name:
                     return
             with st.container(border=True):
                 properties_copy = step.properties.copy()
-                runtime = properties_copy.pop('runtime', None)
+                runtime = properties_copy.pop("runtime", None)
                 if runtime is not None:
-                    runtime_html = f'<div style="color: gray; font-size: smaller; text-align: right;">{round(float(runtime), 1)}s</div>'
+                    runtime_html = (
+                        f'<div style="color: gray; font-size: smaller;'
+                        f'text-align: right;">'
+                        f"{round(float(runtime), 1)}s</div>"
+                    )
                 else:
-                    runtime_html = ''
+                    runtime_html = ""
 
-                type_displays = {
-                    "RECLASSIFY_PAIRS": "Reclassify",
-                    "UPDATE_SUBPROJECT_WITH_UNCERTAIN_LINKS": "Fetch uncertain links and reencoded records",
-                    "DETERMINE_UNCERTAIN_LINKS": "Determine uncertain links",
-                    "UPDATE_MATCHER": "Update classification model",
-                    "REPORT_PAIRS": "Report reviewed predictions",
-                    "RUN_INITIAL_LINKAGE": "Run initial linkage",
-                    "TRANSFER_ENCODED_DATASET": "Transfer initial encoded dataset",
-                }
                 step_name = step.type
-                if step.type in type_displays:
-                    step_name = type_displays[step.type]
+                if step.type in STEP_TYPE_DISPLAY_NAMES:
+                    step_name = STEP_TYPE_DISPLAY_NAMES[step.type]
                 if layer is None:
                     color = "gray"
                 else:
                     color = get_layer_color(layer.name)
                 st.markdown(
                     f"""
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 20px;">
-                        <div style="font-weight: bold; text-align: left; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 3px; text-decoration-color: {color};">{step_name}</div>
+                    <div style="display: flex; justify-content: space-between; 
+                            align-items: center; width: 100%; padding-bottom: 20px;">
+                        <div style="font-weight: bold; text-align: left;
+                            text-decoration: underline; text-underline-offset: 5px;
+                            text-decoration-thickness: 3px; 
+                            text-decoration-color: {color};">{step_name}</div>
                         {runtime_html}
                     </div>
                     """,
-                    unsafe_allow_html=True
+                    unsafe_allow_html=True,
                 )
+                if not short_mode:
+                    self.render_processing_step_properties(
+                        properties_copy, with_layer_name
+                    )
+                    render_report_groups(list(step.report_groups.values()))
 
-                self.render_processing_step_properties(properties_copy, with_layer_name)
-                render_report_groups(list(step.report_groups.values()))
-
-    def render_processing_step_properties(self, properties: dict[str, str],
-                                          with_layer_name: bool = True):
+    def render_processing_step_properties(
+            self, properties: dict[str, str], with_layer_name: bool = True
+    ):
         if with_layer_name:
-            if 'projectId' in properties:
-                layer = self.get_layer_of_project_id(properties['projectId'])
+            if "projectId" in properties:
+                layer = self.get_layer_of_project_id(properties["projectId"])
                 color = get_layer_color(layer.name)
                 st.markdown(f":{color}[{layer.name}]")
         properties_copy = properties.copy()
-        if 'projectId' in properties_copy:
-            del properties_copy['projectId']
+        if "projectId" in properties_copy:
+            del properties_copy["projectId"]
         if len(properties_copy) > 0:
             # st.json(properties_copy)
-            df = pd.DataFrame(list(properties_copy.items()),
-                              columns=["Property", "Value"])
-            st.dataframe(df, use_container_width=True, hide_index=True,
-                         column_config=None)
+            df = pd.DataFrame(
+                list(properties_copy.items()), columns=["Property", "Value"]
+            )
+            st.dataframe(df, hide_index=True, column_config=None)
 
     def get_layer_with_name(self, name: str):
         for layer in self.protocol.layers:

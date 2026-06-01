@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **protocol_id** | **str** |  | [optional] 
 **layers** | [**List[Layer]**](Layer.md) |  | [optional] 
+**linkage_project** | **str** |  | [optional] 
 **plaintext_dataset_id** | **int** |  | [optional] 
 **initial_dataset_id** | **int** |  | [optional] 
 **last_update** | **str** |  | [optional] 

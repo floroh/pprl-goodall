@@ -1,0 +1,18 @@
+networks:
+  pprl-services-net:
+    external: true
+
+services:
+  mlflow-server:
+    networks:
+      - pprl-services-net
+    environment:
+      - MLFLOW_SERVER_DISABLE_SECURITY_MIDDLEWARE=true
+  minio:
+    networks:
+      - pprl-services-net
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - public-net

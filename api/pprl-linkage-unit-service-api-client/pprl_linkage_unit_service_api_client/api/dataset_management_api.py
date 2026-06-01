@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     PPRL Linkage Unit Service API
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -313,8 +312,8 @@ class DatasetManagementApi:
     @validate_call
     def compare_datasets(
         self,
-        id_dataset0: StrictInt,
-        id_dataset1: StrictInt,
+        dataset_id0: StrictInt,
+        dataset_id1: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -331,10 +330,10 @@ class DatasetManagementApi:
         """Compare dataset
 
 
-        :param id_dataset0: (required)
-        :type id_dataset0: int
-        :param id_dataset1: (required)
-        :type id_dataset1: int
+        :param dataset_id0: (required)
+        :type dataset_id0: int
+        :param dataset_id1: (required)
+        :type dataset_id1: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -358,8 +357,8 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._compare_datasets_serialize(
-            id_dataset0=id_dataset0,
-            id_dataset1=id_dataset1,
+            dataset_id0=dataset_id0,
+            dataset_id1=dataset_id1,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -383,8 +382,8 @@ class DatasetManagementApi:
     @validate_call
     def compare_datasets_with_http_info(
         self,
-        id_dataset0: StrictInt,
-        id_dataset1: StrictInt,
+        dataset_id0: StrictInt,
+        dataset_id1: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -401,10 +400,10 @@ class DatasetManagementApi:
         """Compare dataset
 
 
-        :param id_dataset0: (required)
-        :type id_dataset0: int
-        :param id_dataset1: (required)
-        :type id_dataset1: int
+        :param dataset_id0: (required)
+        :type dataset_id0: int
+        :param dataset_id1: (required)
+        :type dataset_id1: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -428,8 +427,8 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._compare_datasets_serialize(
-            id_dataset0=id_dataset0,
-            id_dataset1=id_dataset1,
+            dataset_id0=dataset_id0,
+            dataset_id1=dataset_id1,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -453,8 +452,8 @@ class DatasetManagementApi:
     @validate_call
     def compare_datasets_without_preload_content(
         self,
-        id_dataset0: StrictInt,
-        id_dataset1: StrictInt,
+        dataset_id0: StrictInt,
+        dataset_id1: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -471,10 +470,10 @@ class DatasetManagementApi:
         """Compare dataset
 
 
-        :param id_dataset0: (required)
-        :type id_dataset0: int
-        :param id_dataset1: (required)
-        :type id_dataset1: int
+        :param dataset_id0: (required)
+        :type dataset_id0: int
+        :param dataset_id1: (required)
+        :type dataset_id1: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -498,8 +497,8 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._compare_datasets_serialize(
-            id_dataset0=id_dataset0,
-            id_dataset1=id_dataset1,
+            dataset_id0=dataset_id0,
+            dataset_id1=dataset_id1,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -518,8 +517,8 @@ class DatasetManagementApi:
 
     def _compare_datasets_serialize(
         self,
-        id_dataset0,
-        id_dataset1,
+        dataset_id0,
+        dataset_id1,
         _request_auth,
         _content_type,
         _headers,
@@ -541,10 +540,10 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset0 is not None:
-            _path_params['idDataset0'] = id_dataset0
-        if id_dataset1 is not None:
-            _path_params['idDataset1'] = id_dataset1
+        if dataset_id0 is not None:
+            _path_params['datasetId0'] = dataset_id0
+        if dataset_id1 is not None:
+            _path_params['datasetId1'] = dataset_id1
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -566,7 +565,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='GET',
-            resource_path='/record/compare/{idDataset0}/{idDataset1}',
+            resource_path='/record/compare/{datasetId0}/{datasetId1}',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -585,7 +584,7 @@ class DatasetManagementApi:
     @validate_call
     def count(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -602,8 +601,8 @@ class DatasetManagementApi:
         """Get the number of records in the database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -627,7 +626,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._count_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -651,7 +650,7 @@ class DatasetManagementApi:
     @validate_call
     def count_with_http_info(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -668,8 +667,8 @@ class DatasetManagementApi:
         """Get the number of records in the database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -693,7 +692,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._count_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -717,7 +716,7 @@ class DatasetManagementApi:
     @validate_call
     def count_without_preload_content(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -734,8 +733,8 @@ class DatasetManagementApi:
         """Get the number of records in the database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -759,7 +758,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._count_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -778,7 +777,7 @@ class DatasetManagementApi:
 
     def _count_serialize(
         self,
-        id_dataset,
+        dataset_id,
         _request_auth,
         _content_type,
         _headers,
@@ -800,8 +799,8 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset is not None:
-            _path_params['idDataset'] = id_dataset
+        if dataset_id is not None:
+            _path_params['datasetId'] = dataset_id
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -823,7 +822,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='GET',
-            resource_path='/record/{idDataset}/count',
+            resource_path='/record/{datasetId}/count',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -842,7 +841,7 @@ class DatasetManagementApi:
     @validate_call
     def delete_all(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -859,8 +858,8 @@ class DatasetManagementApi:
         """Clear the record database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -884,7 +883,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._delete_all_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -908,7 +907,7 @@ class DatasetManagementApi:
     @validate_call
     def delete_all_with_http_info(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -925,8 +924,8 @@ class DatasetManagementApi:
         """Clear the record database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -950,7 +949,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._delete_all_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -974,7 +973,7 @@ class DatasetManagementApi:
     @validate_call
     def delete_all_without_preload_content(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -991,8 +990,8 @@ class DatasetManagementApi:
         """Clear the record database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1016,7 +1015,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._delete_all_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1035,7 +1034,7 @@ class DatasetManagementApi:
 
     def _delete_all_serialize(
         self,
-        id_dataset,
+        dataset_id,
         _request_auth,
         _content_type,
         _headers,
@@ -1057,8 +1056,8 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset is not None:
-            _path_params['idDataset'] = id_dataset
+        if dataset_id is not None:
+            _path_params['datasetId'] = dataset_id
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -1073,7 +1072,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='DELETE',
-            resource_path='/record/{idDataset}/all',
+            resource_path='/record/{datasetId}/all',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -1092,7 +1091,7 @@ class DatasetManagementApi:
     @validate_call
     def delete_dataset(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1109,8 +1108,8 @@ class DatasetManagementApi:
         """Delete dataset
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1134,7 +1133,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._delete_dataset_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1158,7 +1157,7 @@ class DatasetManagementApi:
     @validate_call
     def delete_dataset_with_http_info(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1175,8 +1174,8 @@ class DatasetManagementApi:
         """Delete dataset
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1200,7 +1199,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._delete_dataset_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1224,7 +1223,7 @@ class DatasetManagementApi:
     @validate_call
     def delete_dataset_without_preload_content(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1241,8 +1240,8 @@ class DatasetManagementApi:
         """Delete dataset
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1266,7 +1265,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._delete_dataset_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1285,7 +1284,7 @@ class DatasetManagementApi:
 
     def _delete_dataset_serialize(
         self,
-        id_dataset,
+        dataset_id,
         _request_auth,
         _content_type,
         _headers,
@@ -1307,8 +1306,8 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset is not None:
-            _path_params['idDataset'] = id_dataset
+        if dataset_id is not None:
+            _path_params['datasetId'] = dataset_id
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -1323,7 +1322,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='DELETE',
-            resource_path='/record/datasets/{idDataset}',
+            resource_path='/record/datasets/{datasetId}',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -1342,7 +1341,7 @@ class DatasetManagementApi:
     @validate_call
     def find_by_dataset_and_source(
         self,
-        id_dataset: StrictStr,
+        dataset_id: StrictInt,
         body: StrictStr,
         _request_timeout: Union[
             None,
@@ -1360,8 +1359,8 @@ class DatasetManagementApi:
         """Retrieve a persisted record by source
 
 
-        :param id_dataset: (required)
-        :type id_dataset: str
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param body: (required)
         :type body: str
         :param _request_timeout: timeout setting for this request. If one
@@ -1387,7 +1386,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._find_by_dataset_and_source_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             body=body,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1412,7 +1411,7 @@ class DatasetManagementApi:
     @validate_call
     def find_by_dataset_and_source_with_http_info(
         self,
-        id_dataset: StrictStr,
+        dataset_id: StrictInt,
         body: StrictStr,
         _request_timeout: Union[
             None,
@@ -1430,8 +1429,8 @@ class DatasetManagementApi:
         """Retrieve a persisted record by source
 
 
-        :param id_dataset: (required)
-        :type id_dataset: str
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param body: (required)
         :type body: str
         :param _request_timeout: timeout setting for this request. If one
@@ -1457,7 +1456,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._find_by_dataset_and_source_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             body=body,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1482,7 +1481,7 @@ class DatasetManagementApi:
     @validate_call
     def find_by_dataset_and_source_without_preload_content(
         self,
-        id_dataset: StrictStr,
+        dataset_id: StrictInt,
         body: StrictStr,
         _request_timeout: Union[
             None,
@@ -1500,8 +1499,8 @@ class DatasetManagementApi:
         """Retrieve a persisted record by source
 
 
-        :param id_dataset: (required)
-        :type id_dataset: str
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param body: (required)
         :type body: str
         :param _request_timeout: timeout setting for this request. If one
@@ -1527,7 +1526,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._find_by_dataset_and_source_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             body=body,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1547,7 +1546,7 @@ class DatasetManagementApi:
 
     def _find_by_dataset_and_source_serialize(
         self,
-        id_dataset,
+        dataset_id,
         body,
         _request_auth,
         _content_type,
@@ -1570,8 +1569,8 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset is not None:
-            _path_params['idDataset'] = id_dataset
+        if dataset_id is not None:
+            _path_params['datasetId'] = dataset_id
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -1608,7 +1607,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/record/findBySource/{idDataset}',
+            resource_path='/record/findBySource/{datasetId}',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -1627,7 +1626,7 @@ class DatasetManagementApi:
     @validate_call
     def find_by_record_id(
         self,
-        id_dataset: StrictStr,
+        dataset_id: StrictInt,
         record_id_dto: RecordIdDto,
         _request_timeout: Union[
             None,
@@ -1645,8 +1644,8 @@ class DatasetManagementApi:
         """Retrieve a persisted record by its record id (source + local)
 
 
-        :param id_dataset: (required)
-        :type id_dataset: str
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param record_id_dto: (required)
         :type record_id_dto: RecordIdDto
         :param _request_timeout: timeout setting for this request. If one
@@ -1672,7 +1671,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._find_by_record_id_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             record_id_dto=record_id_dto,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1697,7 +1696,7 @@ class DatasetManagementApi:
     @validate_call
     def find_by_record_id_with_http_info(
         self,
-        id_dataset: StrictStr,
+        dataset_id: StrictInt,
         record_id_dto: RecordIdDto,
         _request_timeout: Union[
             None,
@@ -1715,8 +1714,8 @@ class DatasetManagementApi:
         """Retrieve a persisted record by its record id (source + local)
 
 
-        :param id_dataset: (required)
-        :type id_dataset: str
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param record_id_dto: (required)
         :type record_id_dto: RecordIdDto
         :param _request_timeout: timeout setting for this request. If one
@@ -1742,7 +1741,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._find_by_record_id_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             record_id_dto=record_id_dto,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1767,7 +1766,7 @@ class DatasetManagementApi:
     @validate_call
     def find_by_record_id_without_preload_content(
         self,
-        id_dataset: StrictStr,
+        dataset_id: StrictInt,
         record_id_dto: RecordIdDto,
         _request_timeout: Union[
             None,
@@ -1785,8 +1784,8 @@ class DatasetManagementApi:
         """Retrieve a persisted record by its record id (source + local)
 
 
-        :param id_dataset: (required)
-        :type id_dataset: str
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param record_id_dto: (required)
         :type record_id_dto: RecordIdDto
         :param _request_timeout: timeout setting for this request. If one
@@ -1812,7 +1811,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._find_by_record_id_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             record_id_dto=record_id_dto,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1832,7 +1831,7 @@ class DatasetManagementApi:
 
     def _find_by_record_id_serialize(
         self,
-        id_dataset,
+        dataset_id,
         record_id_dto,
         _request_auth,
         _content_type,
@@ -1855,8 +1854,8 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset is not None:
-            _path_params['idDataset'] = id_dataset
+        if dataset_id is not None:
+            _path_params['datasetId'] = dataset_id
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -1893,7 +1892,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/record/findByRecordId/{idDataset}',
+            resource_path='/record/findByRecordId/{datasetId}',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -2440,7 +2439,7 @@ class DatasetManagementApi:
     @validate_call
     def get_all(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         limit: Optional[StrictInt] = None,
         _request_timeout: Union[
             None,
@@ -2458,8 +2457,8 @@ class DatasetManagementApi:
         """Get all records from the database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param limit:
         :type limit: int
         :param _request_timeout: timeout setting for this request. If one
@@ -2485,7 +2484,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._get_all_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             limit=limit,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -2510,7 +2509,7 @@ class DatasetManagementApi:
     @validate_call
     def get_all_with_http_info(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         limit: Optional[StrictInt] = None,
         _request_timeout: Union[
             None,
@@ -2528,8 +2527,8 @@ class DatasetManagementApi:
         """Get all records from the database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param limit:
         :type limit: int
         :param _request_timeout: timeout setting for this request. If one
@@ -2555,7 +2554,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._get_all_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             limit=limit,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -2580,7 +2579,7 @@ class DatasetManagementApi:
     @validate_call
     def get_all_without_preload_content(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         limit: Optional[StrictInt] = None,
         _request_timeout: Union[
             None,
@@ -2598,8 +2597,8 @@ class DatasetManagementApi:
         """Get all records from the database
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param limit:
         :type limit: int
         :param _request_timeout: timeout setting for this request. If one
@@ -2625,7 +2624,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._get_all_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             limit=limit,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -2645,7 +2644,7 @@ class DatasetManagementApi:
 
     def _get_all_serialize(
         self,
-        id_dataset,
+        dataset_id,
         limit,
         _request_auth,
         _content_type,
@@ -2668,8 +2667,8 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset is not None:
-            _path_params['idDataset'] = id_dataset
+        if dataset_id is not None:
+            _path_params['datasetId'] = dataset_id
         # process the query parameters
         if limit is not None:
             
@@ -2695,7 +2694,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='GET',
-            resource_path='/record/{idDataset}/all',
+            resource_path='/record/{datasetId}/all',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -2714,7 +2713,7 @@ class DatasetManagementApi:
     @validate_call
     def get_dataset_description(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2731,8 +2730,8 @@ class DatasetManagementApi:
         """Get dataset description
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2756,7 +2755,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._get_dataset_description_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2780,7 +2779,7 @@ class DatasetManagementApi:
     @validate_call
     def get_dataset_description_with_http_info(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2797,8 +2796,8 @@ class DatasetManagementApi:
         """Get dataset description
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2822,7 +2821,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._get_dataset_description_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2846,7 +2845,7 @@ class DatasetManagementApi:
     @validate_call
     def get_dataset_description_without_preload_content(
         self,
-        id_dataset: StrictInt,
+        dataset_id: StrictInt,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2863,8 +2862,8 @@ class DatasetManagementApi:
         """Get dataset description
 
 
-        :param id_dataset: (required)
-        :type id_dataset: int
+        :param dataset_id: (required)
+        :type dataset_id: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2888,7 +2887,7 @@ class DatasetManagementApi:
         """ # noqa: E501
 
         _param = self._get_dataset_description_serialize(
-            id_dataset=id_dataset,
+            dataset_id=dataset_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2907,7 +2906,7 @@ class DatasetManagementApi:
 
     def _get_dataset_description_serialize(
         self,
-        id_dataset,
+        dataset_id,
         _request_auth,
         _content_type,
         _headers,
@@ -2929,8 +2928,8 @@ class DatasetManagementApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
-        if id_dataset is not None:
-            _path_params['idDataset'] = id_dataset
+        if dataset_id is not None:
+            _path_params['datasetId'] = dataset_id
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -2952,7 +2951,7 @@ class DatasetManagementApi:
 
         return self.api_client.param_serialize(
             method='GET',
-            resource_path='/record/datasets/{idDataset}',
+            resource_path='/record/datasets/{datasetId}',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

@@ -4,7 +4,7 @@ from pprl_linkage_unit_service_api_client import RecordPairDto, RecordDto
 from pydantic import BaseModel
 
 from goodall.protocol.clerical_review.mask import Mask, create_mask, BaselineMask
-from goodall.ui.PPRL_Services_UI import ATTRIBUTE_ORDER, ATTRIBUTES_FOR_DISPLAY
+from goodall.utils.constants import ATTRIBUTES_FOR_DISPLAY
 
 SYMBOL_UNEQUAL = "❌"
 # SYMBOL_EQUAL = "✔️"
@@ -15,7 +15,7 @@ FREQUENCY_LABELS = [
     ("🟠", "Frequent"),  # 1
     ("🟡", "Average"),  # 2
     ("🟢", "Rare"),  # 3
-    ("🔵", "Very Rare")  # 4
+    ("🔵", "Very Rare"),  # 4
 ]
 
 
@@ -29,7 +29,8 @@ class PairDescription(BaseModel):
 
 def format_bitset_as_bitstring(bitset_base64: str) -> str:
     """
-    Convert a BITSET_BASE64 string to a bitstring and format it as blocks of 32 characters.
+    Convert a BITSET_BASE64 string to a bitstring and
+     format it as blocks of fixed length.
     :param bitset_base64: The base64 encoded bitset string.
     :rtype: str
     """
@@ -49,15 +50,16 @@ def format_bitset_as_bitstring(bitset_base64: str) -> str:
 
 
 class PairDisplay:
-    def __init__(self,
-                 pairs: list[RecordPairDto],
-                 records: list[RecordDto],
-                 mask: Mask | str = None,
-                 show_only_first_record: bool = False,
-                 cell_length: int = 100,
-                 show_similarities: bool = False,
-                 show_values_as_popup: bool = False,
-                 ):
+    def __init__(
+        self,
+        pairs: list[RecordPairDto],
+        records: list[RecordDto],
+        mask: Mask | str = None,
+        show_only_first_record: bool = False,
+        cell_length: int = 100,
+        show_similarities: bool = False,
+        show_values_as_popup: bool = False,
+    ):
         self.pairs = pairs
         self.records = records
         if isinstance(mask, str):
@@ -98,10 +100,14 @@ class PairDisplay:
             pair_descriptions.append(pair_description)
         return pair_descriptions
 
-    def render_html(self, table_width: int = 900, hide_header: bool = False) -> list[str]:
+    def render_html(
+        self, table_width: int = 800, hide_header: bool = False
+    ) -> list[str]:
         """
-        Render the record pairs as individual html tables with attributes as columns sorted by the given order.
-        If the attribute type is BITSET_BASE64, convert the attribute value to a bitstring and print it as a block of 32 char width.
+        Render the record pairs as individual html tables with attributes as columns
+        sorted by the given order.
+        If the attribute type is BITSET_BASE64, convert the attribute value
+        to a bitstring and print it as a block of 32 char width.
         :rtype: list[str]
         """
         html_tables = []
@@ -124,12 +130,11 @@ class PairDisplay:
             second_row = "<tr>"
             for attribute in self.attribute_order:
                 multiline_content = None
-                background_color = "transparent"
+                # background_color = "transparent"
                 display_class = ""
                 # if self.mask is not None and not type(self.mask) is BaselineMask:
                 if self.mask is not None:
-                    similarity = pair_descr.attribute_similarities.get(attribute,
-                                                                       None)
+                    similarity = pair_descr.attribute_similarities.get(attribute, None)
                     if similarity is not None:
                         if self.show_similarities:
                             multiline_content = round(similarity, 2)
@@ -137,11 +142,15 @@ class PairDisplay:
                             if similarity == 1:
                                 multiline_content = SYMBOL_EQUAL
                                 frq_label = pair_descr.attributes0.get(
-                                    attribute + "_FRQLABEL")
+                                    attribute + "_FRQLABEL"
+                                )
                                 if frq_label is not None:
-                                    multiline_content = f"{self.get_frequency_label(frq_label)}"
+                                    multiline_content = (
+                                        f"{self.get_frequency_label(frq_label)}"
+                                    )
                             elif similarity < 0.4:
-                                # multiline_content = SYMBOL_UNEQUAL + f" {round(similarity, 2)}"
+                                # multiline_content = (SYMBOL_UNEQUAL +
+                                #                      f" {round(similarity, 2)}")
                                 multiline_content = SYMBOL_UNEQUAL
                         if similarity == 1:
                             # background_color = "green"
@@ -149,8 +158,14 @@ class PairDisplay:
                         elif similarity < 0.4:
                             # background_color = "red"
                             display_class = "unequal"
-                if multiline_content is not None and not type(self.mask) is BaselineMask:
-                    first_row += f"<td class='merged align-center {display_class}' rowspan='2'>{multiline_content}</td>"
+                if (
+                    multiline_content is not None
+                    and type(self.mask) is not BaselineMask
+                ):
+                    first_row += (
+                        f"<td class='merged align-center {display_class}' "
+                        f"rowspan='2'>{multiline_content}</td>"
+                    )
                 else:
                     value0 = pair_descr.attributes0.get(attribute, "")
                     value1 = pair_descr.attributes1.get(attribute, "")
@@ -160,7 +175,10 @@ class PairDisplay:
                     if len(value0) == len(value1) == 0:
                         if multiline_content is None:
                             multiline_content = "❓"
-                        first_row += f"<td class='merged align-center  {display_class}' rowspan='2'>{multiline_content}</td>"
+                        first_row += (
+                            f"<td class='merged align-center {display_class}'"
+                            f" rowspan='2'>{multiline_content}</td>"
+                        )
                     else:
                         if self.mask is not None:
                             self.mask.html = True
@@ -184,7 +202,7 @@ class PairDisplay:
     def add_br_every_n_bits(self, html):
         # TODO Fix breaks being off by 1 positions sometimes
         # Pattern to match spans
-        span_pattern = r'<span(.*?)>(.*?)</span>'
+        span_pattern = r"<span(.*?)>(.*?)</span>"
 
         # Find all spans
         spans = re.findall(span_pattern, html)
@@ -201,7 +219,7 @@ class PairDisplay:
                     # Take only the part that fits
                     current_row.append((attrs, content[:remaining_space]))
                     result.append(current_row)
-                    result.append('<br />')  # Add a line break
+                    result.append("<br />")  # Add a line break
                     content = content[remaining_space:]  # Remaining content
                     current_row = []  # Start a new row
                     current_row_length = 0
@@ -222,11 +240,11 @@ class PairDisplay:
         # Rebuild the HTML from rows
         rebuilt_html = ""
         for row in result:
-            if row == '<br />':
+            if row == "<br />":
                 rebuilt_html += row
             else:
                 for attrs, content in row:
-                    rebuilt_html += f'<span{attrs}>{content}</span>'
+                    rebuilt_html += f"<span{attrs}>{content}</span>"
 
         return rebuilt_html
 

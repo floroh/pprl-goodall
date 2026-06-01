@@ -2,9 +2,9 @@
 port = 8501
 runOnSave = false
 enableStaticServing = true
+maxMessageSize = 1000
 
 [browser]
-# Whether to send usage statistics to Streamlit.
 gatherUsageStats = false
 
 # Custom theme

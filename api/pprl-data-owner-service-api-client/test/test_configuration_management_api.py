@@ -33,6 +33,13 @@ class TestConfigurationManagementApi(unittest.TestCase):
         """
         pass
 
+    def test_create_encoding(self) -> None:
+        """Test case for create_encoding
+
+        Create an encoding configuration
+        """
+        pass
+
     def test_get_configs(self) -> None:
         """Test case for get_configs
 

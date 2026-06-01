@@ -1,0 +1,36 @@
+{
+  "header" : false,
+  "charset" : "UTF-8",
+  "format" : "RFC4180",
+  "columns" : [ {
+    "name" : "id.source"
+  }, {
+    "name" : "id.global"
+  }, {
+    "name" : "id.local"
+  }, {
+    "name" : "firstName"
+  }, {
+    "name" : "middleName"
+  }, {
+    "name" : "lastName"
+  }, {
+    "name" : "yearOfBirth"
+  }, {
+    "name" : "placeOfBirth"
+  }, {
+    "name" : "country"
+  }, {
+    "name" : "city"
+  }, {
+    "name" : "plz"
+  }, {
+    "name" : "street"
+  }, {
+    "name" : "gender"
+  }, {
+    "name" : "IGNORE"
+  }, {
+    "name" : "IGNORE"
+  } ]
+}

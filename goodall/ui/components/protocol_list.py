@@ -2,14 +2,17 @@ from pprl_protocol_manager_service_api_client import MultiLayerProtocol
 
 from goodall.api_helper import pm_api
 from goodall.api_helper.pm_api import delete_protocol, get_protocol
-from goodall.ui.PPRL_Services_UI import SELECTED_PROTOCOL_ID
-from goodall.ui.components.protocols import prepareProtocolsForDisplay, btn_protocol_refresh, btn_protocol_unselect, \
-    btn_protocol_selector, get_indexed_state_key
+from goodall.ui.constants import SELECTED_PROTOCOL_ID
+from goodall.ui.components.protocols import (
+    prepareProtocolsForDisplay,
+    btn_protocol_refresh,
+    btn_protocol_unselect,
+    btn_protocol_selector,
+    get_indexed_state_key,
+)
 import streamlit as st
-
+from streamlit import session_state as sts
 from goodall.ui.streamlit_utils import del_state_if_exists
-
-sts = st.session_state
 
 
 def render_protocol_list(protocols: list[MultiLayerProtocol]):
@@ -33,6 +36,7 @@ def render_protocol_list(protocols: list[MultiLayerProtocol]):
                 st.rerun()
     btn_protocol_refresh()
     btn_protocol_unselect()
+
 
 def render_selected_protocol_json():
     if SELECTED_PROTOCOL_ID in sts:

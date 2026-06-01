@@ -36,12 +36,14 @@ class TestEncodedTransferRequestDto(unittest.TestCase):
         if include_optional:
             return EncodedTransferRequestDto(
                 data_owner_dataset_id = 56,
+                linkage_unit_dataset_id = 56,
                 encoding = pprl_protocol_manager_service_api_client.models.encoding_id_dto.EncodingIdDto(
                     method = '', 
                     project = '', )
             )
         else:
             return EncodedTransferRequestDto(
+                data_owner_dataset_id = 56,
                 encoding = pprl_protocol_manager_service_api_client.models.encoding_id_dto.EncodingIdDto(
                     method = '', 
                     project = '', ),

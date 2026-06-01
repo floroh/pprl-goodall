@@ -7,6 +7,11 @@ Request description for encoding a single record. The record itself is not part 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **encoding_id** | [**EncodingIdDto**](EncodingIdDto.md) |  | 
+**id_unique** | **object** |  | [optional] 
+**id_source** | **object** |  | [optional] 
+**id_local** | **object** |  | [optional] 
+**id_global** | **object** |  | [optional] 
+**id_blocks** | **object** |  | [optional] 
 **dataset_id** | **int** |  | [optional] 
 **record_secret** | **str** |  | [optional] 
 

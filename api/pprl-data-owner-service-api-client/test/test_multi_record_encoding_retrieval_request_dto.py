@@ -48,7 +48,8 @@ class TestMultiRecordEncodingRetrievalRequestDto(unittest.TestCase):
                             ''
                             ], )
                     ],
-                dataset_id = 56
+                dataset_id = 56,
+                dataset_source = ''
             )
         else:
             return MultiRecordEncodingRetrievalRequestDto(

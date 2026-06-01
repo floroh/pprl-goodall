@@ -7,10 +7,11 @@ from scipy.interpolate import UnivariateSpline
 list_of_expected_types = ["TP", "FP", "FN", "TN"]
 
 
-def combine_FP(df: DataFrame) -> DataFrame:
-    df = df.replace({"type": {"FPs": "FP", "FPd": "FP"}})
-    df = df.replace({"type_x": {"FPs": "FP", "FPd": "FP"}})
-    df = df.replace({"type_y": {"FPs": "FP", "FPd": "FP"}})
+def combine_FP(df: DataFrame, column_names: list[str] | None = None) -> DataFrame:
+    if column_names is None:
+        column_names = ["type", "type_x", "type_y"]
+    for column_name in column_names:
+        df = df.replace({column_name: {"FPs": "FP", "FPd": "FP"}})
     return df
 
 
@@ -30,7 +31,7 @@ def combine_MatchGrade(df: DataFrame) -> DataFrame:
 
 def add_missing_link_types(df: DataFrame) -> DataFrame:
     for type in list_of_expected_types:
-        if not (type in df):
+        if type not in df:
             df[type] = 0
     return df
 
@@ -58,7 +59,7 @@ def get_type_stats_by_probability(df: DataFrame) -> DataFrame:
     cum = cum.reset_index()
     cum.insert(1, "max-probability", pd.IntervalIndex(cum["probability"]).right)
     cum["probability"] = cum["probability"].astype(str)
-    cum = cum.replace(to_replace="\(0.\d+,", value="(0.5,", regex=True)
+    cum = cum.replace(to_replace="(0.\d+,", value="(0.5,", regex=True)
     add_relative_share(cum, "FN")
     add_relative_share(cum, "FP")
     add_relative_share(cum, "TP")
@@ -82,6 +83,18 @@ def get_type(similarity: float, threshold: float, ground_truth_label: str) -> st
         else:
             raise ValueError
 
+def get_gt_label(eval_type: str) -> str:
+    if eval_type == "TP" or eval_type == "FN":
+        return "TRUE_MATCH"
+    elif "FP" in eval_type or eval_type == "TN":
+        return "TRUE_NON_MATCH"
+
+def add_ground_truth_label(df: pd.DataFrame, col_eval_type: str = "Eval-Type") -> pd.DataFrame:
+    cur_out = df.copy(deep=True)
+    cur_out["gtLabel"] = cur_out.apply(
+        lambda row: get_gt_label(row[col_eval_type]), axis=1
+    )
+    return cur_out
 
 def get_real_probability(
     similarity_upper_bound: float,
@@ -145,6 +158,87 @@ def get_real_probabilities_by_threshold(
     return grouped
 
 
+def get_quality_for_thresholds(df: pd.DataFrame, thresholds: list[float],
+                               df_base: pd.DataFrame | None = None) -> pd.DataFrame:
+    """
+    Computes quality metrics per threshold.
+    Returns one row per threshold with:
+    threshold, recall, precision, F1-score, accuracy, TP, FP, FN, TN
+    """
+    rows = []
+
+    # Compute minimum FN from base run if provided
+    min_fn_base = df_base["FN"].min() if df_base is not None else 0
+
+    for thr in thresholds:
+        cur = df.copy(deep=False)
+
+        # Prediction based on threshold
+        pred_match = cur["similarity"] >= thr
+        gt_match = cur["gtLabel"] == "TRUE_MATCH"
+
+        TP = ((pred_match) & (gt_match)).sum()
+        FP = ((pred_match) & (~gt_match)).sum()
+        FN = ((~pred_match) & (gt_match)).sum()
+        TN = ((~pred_match) & (~gt_match)).sum()
+
+        # Adjust FN count to include the missed pairs form the base run
+        FN = FN + min_fn_base
+
+        precision = TP / (TP + FP) if (TP + FP) > 0 else 0.0
+        recall    = TP / (TP + FN) if (TP + FN) > 0 else 0.0
+        f1        = (
+            2 * precision * recall / (precision + recall)
+            if (precision + recall) > 0
+            else 0.0
+        )
+        accuracy  = (TP + TN) / (TP + FP + FN + TN) if (TP + FP + FN + TN) > 0 else 0.0
+        rows.append(
+            {
+                "threshold": thr,
+                "recall": recall,
+                "precision": precision,
+                "F1-score": f1,
+                "Accuracy": accuracy,
+                "TP": TP,
+                "FP": FP,
+                "FN": FN,
+                "TN": TN,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def get_quality_metrics(df: pd.DataFrame,
+                        df_base: pd.DataFrame | None = None) -> dict[str, float]:
+    # Compute minimum FN from base run if provided
+    min_fn_base = df_base["FN"].min() if df_base is not None else 0
+
+    type_counts = df["type"].value_counts()
+    TP = type_counts.get("TP", 0)
+    FP = type_counts.get("FP", 0)
+    FN = type_counts.get("FN", 0)
+    TN = type_counts.get("TN", 0)
+
+    # Adjust FN count to include the missed pairs form the base run
+    FN = FN + min_fn_base
+
+    precision = TP / (TP + FP) if (TP + FP) > 0 else 0.0
+    recall    = TP / (TP + FN) if (TP + FN) > 0 else 0.0
+    f1        = (
+        2 * precision * recall / (precision + recall)
+        if (precision + recall) > 0
+        else 0.0
+    )
+    accuracy  = (TP + TN) / (TP + FP + FN + TN) if (TP + FP + FN + TN) > 0 else 0.0
+    return {
+            "recall": recall,
+            "precision": precision,
+            "f1-score": f1,
+            "accuracy": accuracy
+        }
+
+
 def add_threshold_dependent_types(df: DataFrame, thresholds: list) -> DataFrame:
     out = None
     for thr in thresholds:
@@ -156,9 +250,10 @@ def add_threshold_dependent_types(df: DataFrame, thresholds: list) -> DataFrame:
     return out
 
 
-def add_threshold_dependent_type(df: DataFrame, thr: float) -> DataFrame:
+def add_threshold_dependent_type(df: DataFrame, thr: float,
+                                 col_type: str = "type_thr") -> DataFrame:
     cur_out = df.copy(deep=True)
-    cur_out["type_thr"] = cur_out.apply(
+    cur_out[col_type] = cur_out.apply(
         lambda row: get_type(row["similarity"], thr, row["gtLabel"]), axis=1
     )
     # cur_out[] = df[df['similarity' >= thr] & df['gtLabel' == 'TRUE_MATCH']]

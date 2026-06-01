@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.1",
+    "openapi": "3.1.0",
     "info": {
         "title": "PPRL Data Owner Service API",
         "description": "Services for the data owners for privacy-preserving record linkage, including analysing and encoding of the local dataset",
@@ -11,18 +11,18 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8081",
+            "url": "http://localhost:8181",
             "description": "Generated server url"
         }
     ],
     "tags": [
         {
-            "name": "Project secret management",
-            "description": "Manage project-specific secrets"
-        },
-        {
             "name": "Dataset analysis",
             "description": "Analyse records of a dataset"
+        },
+        {
+            "name": "Project secret management",
+            "description": "Manage project-specific secrets"
         },
         {
             "name": "Configuration management",
@@ -31,6 +31,18 @@
         {
             "name": "Encoder",
             "description": "Encode records from the database"
+        },
+        {
+            "name": "Actuator",
+            "description": "Monitor and interact",
+            "externalDocs": {
+                "description": "Spring Boot Actuator Web API Documentation",
+                "url": "https://docs.spring.io/spring-boot/docs/current/actuator-api/html/"
+            }
+        },
+        {
+            "name": "Corrupter",
+            "description": "Generate corrupted records from the database"
         },
         {
             "name": "On-the-fly encoder",
@@ -279,7 +291,7 @@
                 }
             }
         },
-        "/record/findBySource/{idDataset}": {
+        "/record/findBySource/{datasetId}": {
             "post": {
                 "tags": [
                     "Dataset management"
@@ -288,11 +300,12 @@
                 "operationId": "findByDatasetAndSource",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -323,7 +336,7 @@
                 }
             }
         },
-        "/record/findByRecordId/{idDataset}": {
+        "/record/findByRecordId/{datasetId}": {
             "post": {
                 "tags": [
                     "Dataset management"
@@ -332,11 +345,12 @@
                 "operationId": "findByRecordId",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -486,7 +500,7 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -566,6 +580,69 @@
                                     "items": {
                                         "$ref": "#/components/schemas/RecordIdDto"
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/corrupter": {
+            "post": {
+                "tags": [
+                    "Corrupter"
+                ],
+                "summary": "Corrupt dataset",
+                "operationId": "corruptDataset",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DatasetCorruptionRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/corrupter/configs": {
+            "post": {
+                "tags": [
+                    "Corrupter"
+                ],
+                "summary": "Create dataset generation config",
+                "operationId": "getDatasetGenerationConfig",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DatasetGenerationConfigCreatorDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DataSetGeneratorConfig"
                                 }
                             }
                         }
@@ -669,6 +746,131 @@
                 }
             }
         },
+        "/config/create": {
+            "post": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Create an encoding configuration",
+                "operationId": "createEncoding",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EncodingCreationRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EncodingCreationResponseDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analysis/tag/{datasetId}": {
+            "get": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get tags from database",
+                "operationId": "getTags",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Add tags to database",
+                "operationId": "saveTags",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Delete all tags of a dataset from database",
+                "operationId": "deleteTags",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/analysis/run": {
             "post": {
                 "tags": [
@@ -731,6 +933,54 @@
                 }
             }
         },
+        "/analysis/pair-tags/{datasetId}": {
+            "post": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get tags for pairs",
+                "operationId": "runPairAnalysis",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RecordIdPairDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/secret/findAll": {
             "get": {
                 "tags": [
@@ -786,7 +1036,7 @@
                 }
             }
         },
-        "/record/{idDataset}/count": {
+        "/record/{datasetId}/count": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -795,12 +1045,12 @@
                 "operationId": "count",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -819,7 +1069,7 @@
                 }
             }
         },
-        "/record/{idDataset}/all": {
+        "/record/{datasetId}/all": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -828,12 +1078,12 @@
                 "operationId": "getAll",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     },
                     {
@@ -871,12 +1121,12 @@
                 "operationId": "deleteAll",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -887,7 +1137,7 @@
                 }
             }
         },
-        "/record/datasets/{idDataset}": {
+        "/record/datasets/{datasetId}": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -896,12 +1146,12 @@
                 "operationId": "getDatasetDescription",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -926,12 +1176,12 @@
                 "operationId": "deleteDataset",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -958,7 +1208,7 @@
                                     "type": "array",
                                     "items": {
                                         "type": "integer",
-                                        "format": "int32"
+                                        "format": "int64"
                                     }
                                 }
                             }
@@ -967,7 +1217,7 @@
                 }
             }
         },
-        "/record/compare/{idDataset0}/{idDataset1}": {
+        "/record/compare/{datasetId0}/{datasetId1}": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -976,21 +1226,21 @@
                 "operationId": "compareDatasets",
                 "parameters": [
                     {
-                        "name": "idDataset0",
+                        "name": "datasetId0",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     },
                     {
-                        "name": "idDataset1",
+                        "name": "datasetId1",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -1009,10 +1259,35 @@
                 }
             }
         },
+        "/generate/corrupter/configs/findAll": {
+            "get": {
+                "tags": [
+                    "Corrupter"
+                ],
+                "summary": "Get dataset generation config methods",
+                "operationId": "getDatasetGenerationMethods",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "uniqueItems": true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/example": {
             "get": {
                 "tags": [
-                    "example-controller"
+                    "example-record-controller"
                 ],
                 "operationId": "example",
                 "responses": {
@@ -1077,6 +1352,49 @@
                 }
             }
         },
+        "/analysis/tag/{datasetId}/{origin}": {
+            "get": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get tags from database",
+                "operationId": "getTagsByOrigin",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "origin",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/analysis/findAll": {
             "get": {
                 "tags": [
@@ -1100,27 +1418,253 @@
                     }
                 }
             }
+        },
+        "/actuator": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator root web endpoint",
+                "operationId": "links",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics'",
+                "operationId": "listNames",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics/{requiredMetricName}": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics-requiredMetricName'",
+                "operationId": "metric",
+                "parameters": [
+                    {
+                        "name": "requiredMetricName",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tag",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/actuator/mappings": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'mappings'",
+                "operationId": "mappings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/info": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'info'",
+                "operationId": "info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/health": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'health'",
+                "operationId": "health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
             "SecretDto": {
-                "required": [
-                    "project",
-                    "secret"
-                ],
                 "type": "object",
+                "description": "Project-specific secret necessary to create unique encodings per project, that is is only known to the data owners",
                 "properties": {
                     "project": {
                         "type": "string",
-                        "description": "Unique name of the record-linkage project"
+                        "description": "Unique name of the record-linkage project",
+                        "minLength": 1
                     },
                     "secret": {
                         "type": "string",
-                        "description": "Secret value"
+                        "description": "Secret value",
+                        "minLength": 1
                     }
                 },
-                "description": "Project-specific secret necessary to create unique encodings per project, that is is only known to the data owners"
+                "required": [
+                    "project",
+                    "secret"
+                ]
             },
             "AttributeDto": {
                 "type": "object",
@@ -1135,6 +1679,7 @@
             },
             "EncodingIdDto": {
                 "type": "object",
+                "description": "ID of an encoding scheme",
                 "properties": {
                     "method": {
                         "type": "string",
@@ -1144,8 +1689,7 @@
                         "type": "string",
                         "description": "Unique name of the record-linkage project"
                     }
-                },
-                "description": "ID of an encoding scheme"
+                }
             },
             "RecordDto": {
                 "type": "object",
@@ -1155,7 +1699,7 @@
                     },
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "encodingId": {
                         "$ref": "#/components/schemas/EncodingIdDto"
@@ -1214,19 +1758,21 @@
             },
             "EncodingDto": {
                 "type": "object",
+                "description": "Description of an encoding scheme",
                 "properties": {
                     "id": {
-                        "$ref": "#/components/schemas/EncodingIdDto"
+                        "$ref": "#/components/schemas/EncodingIdDto",
+                        "description": "ID of this encoding scheme"
                     },
                     "validation": {
-                        "$ref": "#/components/schemas/RecordRequirementsDto"
+                        "$ref": "#/components/schemas/RecordRequirementsDto",
+                        "description": "Description of requirements for this scheme"
                     },
                     "config": {
                         "type": "string",
                         "description": "Configuration / parameters to build the encoder"
                     }
-                },
-                "description": "Description of an encoding scheme"
+                }
             },
             "RecordRequirementsDto": {
                 "type": "object",
@@ -1238,8 +1784,7 @@
                         "type": "array",
                         "description": "List of encoding methods that can be matched with this scheme",
                         "items": {
-                            "type": "string",
-                            "description": "List of encoding methods that can be matched with this scheme"
+                            "type": "string"
                         }
                     },
                     "attributes": {
@@ -1248,14 +1793,11 @@
                             "$ref": "#/components/schemas/AttributeDescriptionDto"
                         }
                     }
-                },
-                "description": "Description of requirements for this scheme"
+                }
             },
             "EncodingRequestDto": {
-                "required": [
-                    "encodingId"
-                ],
                 "type": "object",
+                "description": "Request for encoding a single record that is included in the request.",
                 "properties": {
                     "encodingId": {
                         "$ref": "#/components/schemas/EncodingIdDto"
@@ -1267,29 +1809,50 @@
                         "type": "string"
                     }
                 },
-                "description": "Request for encoding a single record that is included in the request."
-            },
-            "EncodingRetrievalRequestDto": {
                 "required": [
                     "encodingId"
-                ],
+                ]
+            },
+            "EncodingRetrievalRequestDto": {
                 "type": "object",
+                "description": "Request description for encoding a single record. The record itself is not part of the request, but retrieved from the database using its id.",
                 "properties": {
                     "encodingId": {
                         "$ref": "#/components/schemas/EncodingIdDto"
                     },
+                    "id.unique": {
+                        "type": "object"
+                    },
+                    "id.source": {
+                        "type": "object"
+                    },
+                    "id.local": {
+                        "type": "object"
+                    },
+                    "id.global": {
+                        "type": "object"
+                    },
+                    "id.blocks": {
+                        "type": "object",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "recordSecret": {
                         "type": "string"
                     }
                 },
-                "description": "Request description for encoding a single record. The record itself is not part of the request, but retrieved from the database using its id."
+                "required": [
+                    "encodingId"
+                ]
             },
             "MultiRecordEncodingRetrievalRequestDto": {
                 "type": "object",
+                "description": "Request description for encoding multiple records from the same dataset with the same encoding. No record-specific secret is required or possible.",
                 "properties": {
                     "encodingId": {
                         "$ref": "#/components/schemas/EncodingIdDto"
@@ -1303,29 +1866,290 @@
                     },
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
+                    },
+                    "datasetSource": {
+                        "type": "string"
                     }
-                },
-                "description": "Request description for encoding multiple records from the same dataset with the same encoding. No record-specific secret is required or possible."
+                }
             },
             "DatasetDto": {
                 "type": "object",
                 "properties": {
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
-                    },
-                    "plaintextDatasetId": {
-                        "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "datasetName": {
                         "type": "string"
+                    },
+                    "plaintextDatasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "encodingIdDto": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
                     }
                 }
             },
+            "AttributeModifierObject": {
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
+            "DataSetGeneratorConfig": {
+                "type": "object",
+                "description": "Configuration for generating the corrupted dataset",
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the configuration"
+                    },
+                    "originalSize": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Number of records from the original source"
+                    },
+                    "modifiedSize": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Number of records from the modified source"
+                    },
+                    "sourceOverlap": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Share of records from original source that have a duplicate in modified source"
+                    },
+                    "inputFilter": {
+                        "$ref": "#/components/schemas/SelectorRecord",
+                        "description": "Filter the input records before using them in the generator"
+                    },
+                    "sourceModifierConfigs": {
+                        "type": "array",
+                        "description": "Modifiers to sequentially apply on the input records before creating the modified two-source dataset",
+                        "items": {
+                            "$ref": "#/components/schemas/DataSetModifierConfig"
+                        }
+                    },
+                    "duplicateModifierConfigs": {
+                        "type": "array",
+                        "description": "Modifiers to create true matches and true non-matches",
+                        "items": {
+                            "$ref": "#/components/schemas/DataSetModifierConfig"
+                        }
+                    },
+                    "seed": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Global seed for randomness, e.g., when shuffling the input records before corruption\n Take care: Does not necessarily affect random selectors within modifier configs!"
+                    },
+                    "modifierDistributionStrategy": {
+                        "type": "string",
+                        "description": "Setting on how to apply the duplicateModifierConfigs",
+                        "enum": [
+                            "UNISIZE",
+                            "UNISIZE_RELAXED"
+                        ]
+                    },
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
+            "DataSetModifierConfig": {
+                "type": "object",
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "tag": {
+                        "type": "string"
+                    },
+                    "originalSourceName": {
+                        "type": "string"
+                    },
+                    "modifiedSourceName": {
+                        "type": "string"
+                    },
+                    "filterRecordsToModify": {
+                        "$ref": "#/components/schemas/SelectorRecord"
+                    },
+                    "recordModifiers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SelectiveRecordModifier"
+                        }
+                    },
+                    "attributeModifiers": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/SelectiveAttributeModifier"
+                            }
+                        }
+                    },
+                    "trueDuplicate": {
+                        "type": "boolean"
+                    },
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
+            "DatasetCorruptionRequestDto": {
+                "type": "object",
+                "properties": {
+                    "inputDatasetId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "ID of the dataset used for the original records of the corrupted dataset"
+                    },
+                    "outputDatasetId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "ID of the generated dataset. If missing, it will be autogenerated."
+                    },
+                    "config": {
+                        "$ref": "#/components/schemas/DataSetGeneratorConfig",
+                        "description": "Configuration for the corrupter. Either config or configCreator must be set."
+                    },
+                    "configCreator": {
+                        "$ref": "#/components/schemas/DatasetGenerationConfigCreatorDto",
+                        "description": "Configuration for creating a corruption config from a template. Either config or configCreator must be set."
+                    }
+                },
+                "required": [
+                    "inputDatasetId"
+                ]
+            },
+            "DatasetGenerationConfigCreatorDto": {
+                "type": "object",
+                "properties": {
+                    "referenceDatasetId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "ID of the dataset whose records and attribute value (frequencies) are used as the source for generated records. If empty or 0, the input dataset will be used instead"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the dataset modification config",
+                        "minLength": 1
+                    },
+                    "override": {
+                        "$ref": "#/components/schemas/DataSetGeneratorConfig",
+                        "description": "Configuration settings which override the generated config parameters"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "RecordModifier": {
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
+            "SelectiveAttributeModifier": {
+                "type": "object",
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "modifier": {
+                        "$ref": "#/components/schemas/AttributeModifierObject"
+                    },
+                    "selector": {
+                        "$ref": "#/components/schemas/SelectorString"
+                    },
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
+            "SelectiveRecordModifier": {
+                "type": "object",
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "modifier": {
+                        "$ref": "#/components/schemas/RecordModifier"
+                    },
+                    "selector": {
+                        "$ref": "#/components/schemas/SelectorRecord"
+                    },
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
+            "SelectorRecord": {
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
+            "SelectorString": {
+                "discriminator": {
+                    "propertyName": "@class"
+                },
+                "properties": {
+                    "@class": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "@class"
+                ]
+            },
             "MultiRecordEncodingRequestDto": {
                 "type": "object",
+                "description": "Request for encoding multiple records using the same method. The records are included in the request.",
                 "properties": {
                     "encodingId": {
                         "$ref": "#/components/schemas/EncodingIdDto"
@@ -1336,15 +2160,164 @@
                             "$ref": "#/components/schemas/RecordDto"
                         }
                     }
-                },
-                "description": "Request for encoding multiple records using the same method. The records are included in the request."
+                }
+            },
+            "EncodingCreationRequestDto": {
+                "type": "object",
+                "description": "Request for creating an encoding definition.",
+                "properties": {
+                    "weightSelectionMethod": {
+                        "type": "string",
+                        "enum": [
+                            "NONE",
+                            "FELLEGI_SUNTER"
+                        ]
+                    },
+                    "frequencySelectionMethod": {
+                        "type": "string",
+                        "enum": [
+                            "NONE",
+                            "DATABASE"
+                        ]
+                    },
+                    "encodingCreationMethod": {
+                        "type": "string",
+                        "enum": [
+                            "BASE_ENCODING_ADAPTION",
+                            "RBF",
+                            "ABF"
+                        ]
+                    },
+                    "baseEncodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "outputEncodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "attributeWeights": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "attributeLength": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "sourceSpecific": {
+                        "type": "boolean"
+                    },
+                    "attributeErrorRates": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        },
+                        "description": "Precomputed/estimated error rates.Required if sourceSpecific = true because the error rate cannot be determined per source."
+                    },
+                    "sourceSpecificAttributeWeights": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number",
+                                "format": "double"
+                            }
+                        },
+                        "description": "Attribute weights for each data source. Only relevant if sourceSpecific = true."
+                    },
+                    "sourceSpecificAttributeLength": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number",
+                                "format": "double"
+                            }
+                        },
+                        "description": "Attribute lengths for each data source. Only relevant if sourceSpecific = true."
+                    },
+                    "sources": {
+                        "type": "array",
+                        "description": "Names of sources. Only relevant for sourceSpecific = true and WeightSelectionMethod.None.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "averageFillrate": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "maxFillrate": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "bloomFilterSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "persist": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "EncodingCreationResponseDto": {
+                "type": "object",
+                "description": "Response of creating an encoding definition.",
+                "properties": {
+                    "request": {
+                        "$ref": "#/components/schemas/EncodingCreationRequestDto",
+                        "description": "Request description with auto-generated dataset-based properties"
+                    },
+                    "encoding": {
+                        "$ref": "#/components/schemas/EncodingDto"
+                    }
+                }
+            },
+            "Tag": {
+                "type": "object",
+                "properties": {
+                    "id0": {
+                        "type": "string"
+                    },
+                    "id1": {
+                        "type": "string"
+                    },
+                    "attribute": {
+                        "type": "string"
+                    },
+                    "tag": {
+                        "type": "string"
+                    },
+                    "stringValue": {
+                        "type": "string"
+                    },
+                    "numericValue": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "origin": {
+                        "type": "string"
+                    }
+                }
             },
             "AnalysisRequestDto": {
                 "type": "object",
                 "properties": {
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "projectId": {
                         "type": "string"
@@ -1438,6 +2411,35 @@
                                 "type": "string"
                             }
                         }
+                    }
+                }
+            },
+            "RecordIdPairDto": {
+                "type": "object",
+                "properties": {
+                    "leftRecordId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "rightRecordId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "label": {
+                        "type": "string",
+                        "enum": [
+                            "TRUE_MATCH",
+                            "TRUE_NON_MATCH"
+                        ]
+                    }
+                }
+            },
+            "Link": {
+                "type": "object",
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "templated": {
+                        "type": "boolean"
                     }
                 }
             }

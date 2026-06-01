@@ -16,42 +16,115 @@
 
 __version__ = "1.0.0"
 
+# Define package exports
+__all__ = [
+    "ActuatorApi",
+    "ConfigurationManagementApi",
+    "CorrupterApi",
+    "DatasetAnalysisApi",
+    "DatasetManagementApi",
+    "EncoderApi",
+    "OnTheFlyEncoderApi",
+    "ProjectSecretManagementApi",
+    "ExampleRecordControllerApi",
+    "ApiResponse",
+    "ApiClient",
+    "Configuration",
+    "OpenApiException",
+    "ApiTypeError",
+    "ApiValueError",
+    "ApiKeyError",
+    "ApiAttributeError",
+    "ApiException",
+    "AnalysisRequestDto",
+    "AnalysisResultDto",
+    "AttributeDescriptionDto",
+    "AttributeDto",
+    "AttributeModifierObject",
+    "DataSetGeneratorConfig",
+    "DataSetModifierConfig",
+    "DatasetCorruptionRequestDto",
+    "DatasetDto",
+    "DatasetGenerationConfigCreatorDto",
+    "EncodingCreationRequestDto",
+    "EncodingCreationResponseDto",
+    "EncodingDto",
+    "EncodingIdDto",
+    "EncodingRequestDto",
+    "EncodingRetrievalRequestDto",
+    "Link",
+    "MultiRecordEncodingRequestDto",
+    "MultiRecordEncodingRetrievalRequestDto",
+    "RecordDto",
+    "RecordIdDto",
+    "RecordIdPairDto",
+    "RecordModifier",
+    "RecordRequirementsDto",
+    "Report",
+    "ReportGroup",
+    "SecretDto",
+    "SelectiveAttributeModifier",
+    "SelectiveRecordModifier",
+    "SelectorRecord",
+    "SelectorString",
+    "SerializableTable",
+    "Tag",
+]
+
 # import apis into sdk package
-from pprl_data_owner_service_api_client.api.configuration_management_api import ConfigurationManagementApi
-from pprl_data_owner_service_api_client.api.dataset_analysis_api import DatasetAnalysisApi
-from pprl_data_owner_service_api_client.api.dataset_management_api import DatasetManagementApi
-from pprl_data_owner_service_api_client.api.encoder_api import EncoderApi
-from pprl_data_owner_service_api_client.api.on_the_fly_encoder_api import OnTheFlyEncoderApi
-from pprl_data_owner_service_api_client.api.project_secret_management_api import ProjectSecretManagementApi
-from pprl_data_owner_service_api_client.api.example_controller_api import ExampleControllerApi
+from pprl_data_owner_service_api_client.api.actuator_api import ActuatorApi as ActuatorApi
+from pprl_data_owner_service_api_client.api.configuration_management_api import ConfigurationManagementApi as ConfigurationManagementApi
+from pprl_data_owner_service_api_client.api.corrupter_api import CorrupterApi as CorrupterApi
+from pprl_data_owner_service_api_client.api.dataset_analysis_api import DatasetAnalysisApi as DatasetAnalysisApi
+from pprl_data_owner_service_api_client.api.dataset_management_api import DatasetManagementApi as DatasetManagementApi
+from pprl_data_owner_service_api_client.api.encoder_api import EncoderApi as EncoderApi
+from pprl_data_owner_service_api_client.api.on_the_fly_encoder_api import OnTheFlyEncoderApi as OnTheFlyEncoderApi
+from pprl_data_owner_service_api_client.api.project_secret_management_api import ProjectSecretManagementApi as ProjectSecretManagementApi
+from pprl_data_owner_service_api_client.api.example_record_controller_api import ExampleRecordControllerApi as ExampleRecordControllerApi
 
 # import ApiClient
-from pprl_data_owner_service_api_client.api_response import ApiResponse
-from pprl_data_owner_service_api_client.api_client import ApiClient
-from pprl_data_owner_service_api_client.configuration import Configuration
-from pprl_data_owner_service_api_client.exceptions import OpenApiException
-from pprl_data_owner_service_api_client.exceptions import ApiTypeError
-from pprl_data_owner_service_api_client.exceptions import ApiValueError
-from pprl_data_owner_service_api_client.exceptions import ApiKeyError
-from pprl_data_owner_service_api_client.exceptions import ApiAttributeError
-from pprl_data_owner_service_api_client.exceptions import ApiException
+from pprl_data_owner_service_api_client.api_response import ApiResponse as ApiResponse
+from pprl_data_owner_service_api_client.api_client import ApiClient as ApiClient
+from pprl_data_owner_service_api_client.configuration import Configuration as Configuration
+from pprl_data_owner_service_api_client.exceptions import OpenApiException as OpenApiException
+from pprl_data_owner_service_api_client.exceptions import ApiTypeError as ApiTypeError
+from pprl_data_owner_service_api_client.exceptions import ApiValueError as ApiValueError
+from pprl_data_owner_service_api_client.exceptions import ApiKeyError as ApiKeyError
+from pprl_data_owner_service_api_client.exceptions import ApiAttributeError as ApiAttributeError
+from pprl_data_owner_service_api_client.exceptions import ApiException as ApiException
 
 # import models into sdk package
-from pprl_data_owner_service_api_client.models.analysis_request_dto import AnalysisRequestDto
-from pprl_data_owner_service_api_client.models.analysis_result_dto import AnalysisResultDto
-from pprl_data_owner_service_api_client.models.attribute_description_dto import AttributeDescriptionDto
-from pprl_data_owner_service_api_client.models.attribute_dto import AttributeDto
-from pprl_data_owner_service_api_client.models.dataset_dto import DatasetDto
-from pprl_data_owner_service_api_client.models.encoding_dto import EncodingDto
-from pprl_data_owner_service_api_client.models.encoding_id_dto import EncodingIdDto
-from pprl_data_owner_service_api_client.models.encoding_request_dto import EncodingRequestDto
-from pprl_data_owner_service_api_client.models.encoding_retrieval_request_dto import EncodingRetrievalRequestDto
-from pprl_data_owner_service_api_client.models.multi_record_encoding_request_dto import MultiRecordEncodingRequestDto
-from pprl_data_owner_service_api_client.models.multi_record_encoding_retrieval_request_dto import MultiRecordEncodingRetrievalRequestDto
-from pprl_data_owner_service_api_client.models.record_dto import RecordDto
-from pprl_data_owner_service_api_client.models.record_id_dto import RecordIdDto
-from pprl_data_owner_service_api_client.models.record_requirements_dto import RecordRequirementsDto
-from pprl_data_owner_service_api_client.models.report import Report
-from pprl_data_owner_service_api_client.models.report_group import ReportGroup
-from pprl_data_owner_service_api_client.models.secret_dto import SecretDto
-from pprl_data_owner_service_api_client.models.serializable_table import SerializableTable
+from pprl_data_owner_service_api_client.models.analysis_request_dto import AnalysisRequestDto as AnalysisRequestDto
+from pprl_data_owner_service_api_client.models.analysis_result_dto import AnalysisResultDto as AnalysisResultDto
+from pprl_data_owner_service_api_client.models.attribute_description_dto import AttributeDescriptionDto as AttributeDescriptionDto
+from pprl_data_owner_service_api_client.models.attribute_dto import AttributeDto as AttributeDto
+from pprl_data_owner_service_api_client.models.attribute_modifier_object import AttributeModifierObject as AttributeModifierObject
+from pprl_data_owner_service_api_client.models.data_set_generator_config import DataSetGeneratorConfig as DataSetGeneratorConfig
+from pprl_data_owner_service_api_client.models.data_set_modifier_config import DataSetModifierConfig as DataSetModifierConfig
+from pprl_data_owner_service_api_client.models.dataset_corruption_request_dto import DatasetCorruptionRequestDto as DatasetCorruptionRequestDto
+from pprl_data_owner_service_api_client.models.dataset_dto import DatasetDto as DatasetDto
+from pprl_data_owner_service_api_client.models.dataset_generation_config_creator_dto import DatasetGenerationConfigCreatorDto as DatasetGenerationConfigCreatorDto
+from pprl_data_owner_service_api_client.models.encoding_creation_request_dto import EncodingCreationRequestDto as EncodingCreationRequestDto
+from pprl_data_owner_service_api_client.models.encoding_creation_response_dto import EncodingCreationResponseDto as EncodingCreationResponseDto
+from pprl_data_owner_service_api_client.models.encoding_dto import EncodingDto as EncodingDto
+from pprl_data_owner_service_api_client.models.encoding_id_dto import EncodingIdDto as EncodingIdDto
+from pprl_data_owner_service_api_client.models.encoding_request_dto import EncodingRequestDto as EncodingRequestDto
+from pprl_data_owner_service_api_client.models.encoding_retrieval_request_dto import EncodingRetrievalRequestDto as EncodingRetrievalRequestDto
+from pprl_data_owner_service_api_client.models.link import Link as Link
+from pprl_data_owner_service_api_client.models.multi_record_encoding_request_dto import MultiRecordEncodingRequestDto as MultiRecordEncodingRequestDto
+from pprl_data_owner_service_api_client.models.multi_record_encoding_retrieval_request_dto import MultiRecordEncodingRetrievalRequestDto as MultiRecordEncodingRetrievalRequestDto
+from pprl_data_owner_service_api_client.models.record_dto import RecordDto as RecordDto
+from pprl_data_owner_service_api_client.models.record_id_dto import RecordIdDto as RecordIdDto
+from pprl_data_owner_service_api_client.models.record_id_pair_dto import RecordIdPairDto as RecordIdPairDto
+from pprl_data_owner_service_api_client.models.record_modifier import RecordModifier as RecordModifier
+from pprl_data_owner_service_api_client.models.record_requirements_dto import RecordRequirementsDto as RecordRequirementsDto
+from pprl_data_owner_service_api_client.models.report import Report as Report
+from pprl_data_owner_service_api_client.models.report_group import ReportGroup as ReportGroup
+from pprl_data_owner_service_api_client.models.secret_dto import SecretDto as SecretDto
+from pprl_data_owner_service_api_client.models.selective_attribute_modifier import SelectiveAttributeModifier as SelectiveAttributeModifier
+from pprl_data_owner_service_api_client.models.selective_record_modifier import SelectiveRecordModifier as SelectiveRecordModifier
+from pprl_data_owner_service_api_client.models.selector_record import SelectorRecord as SelectorRecord
+from pprl_data_owner_service_api_client.models.selector_string import SelectorString as SelectorString
+from pprl_data_owner_service_api_client.models.serializable_table import SerializableTable as SerializableTable
+from pprl_data_owner_service_api_client.models.tag import Tag as Tag
+

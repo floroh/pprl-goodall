@@ -1,31 +1,42 @@
 [tool.poetry]
 name = "pprl-goodall"
-version = "0.1.0"
+version = "1.0"
 description = ""
 authors = ["Florens Rohde <florens.rohde@uni-leipzig.de>"]
 readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.12.0"
-pandas = "^2.2.3"
-streamlit = "1.43.2"
-plotly = "^5.24.1"
+python = ">=3.12,<3.14"
+pandas = "^2.3.3"
+numpy = "^2.4.6"
+streamlit = "^1.52"
+matplotlib = "^3.10.6"
+plotly = "^6.5.0"
 plotly-express = "^0.4.1"
-matplotlib = "^3.9.2"
-prefect = "^3.0.11"
-pprl-data-owner-service-api-client = {path = "api/pprl-data-owner-service-api-client"}
-pprl-linkage-unit-service-api-client = {path = "api/pprl-linkage-unit-service-api-client"}
-pprl-protocol-manager-service-api-client = {path = "api/pprl-protocol-manager-service-api-client"}
-shortuuid = "^1.0.11"
+kaleido = "^1.1.0"  # plotly static image export
+pprl-data-owner-service-api-client = { path = "api/pprl-data-owner-service-api-client" }
+pprl-linkage-unit-service-api-client = { path = "api/pprl-linkage-unit-service-api-client" }
+pprl-data-generator-service-api-client = { path = "api/pprl-data-generator-service-api-client" }
+pprl-protocol-manager-service-api-client = { path = "api/pprl-protocol-manager-service-api-client" }
 scipy = "^1.14.1"
 jsonpath-ng = "^1.7.0"
-ipywidgets = "^8.1.5"
-seaborn = "^0.13.2"
-ruff = "^0.7.1"
-kaleido = "0.2.1"
-st-link-analysis = "^0.3.0"
+st-link-analysis = "^0.4.0"
 jellyfish = "^1.1.2"
+tqdm = "^4.67.1"
+loguru = "^0.7.3"
+mlflow = {version = "3.12.0", extras = ["auth"]}
+click = "^8.3.0"
+scikit-learn = "^1.7.2"
+pydantic = "^2.13.4"
+boto3 = "^1.43.16"
+python-dotenv = "^1.2.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.15.14"
+deptry = "^0.25.1"
+pandas-stubs = "~=2.3.3"
+pip-licenses = "^5.5.5"
 
 [build-system]
 requires = ["poetry-core"]
@@ -35,9 +46,9 @@ build-backend = "poetry.core.masonry.api"
 # Same as Black.
 line-length = 88
 indent-width = 4
-exclude = ["api/*"]
+exclude = ["api/*", "**/diff_match_patch"]
 
-target-version = "py310"
+target-version = "py312"
 
 [tool.ruff.lint]
 ignore = ["W191", "E111", "E114", "E117", "D206", "D300", "Q000", "Q001", "Q002", "Q003", "COM812", "COM819", "ISC001", "ISC002", "RET504"]

@@ -1,0 +1,7 @@
+api/*-bak.json
+api/update*.sh
+output/
+
+/data/datasets
+data/configs/**
+!data/configs/**/test-*

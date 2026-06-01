@@ -5,6 +5,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**id_unique** | **object** |  | [optional] 
+**id_source** | **object** |  | [optional] 
+**id_local** | **object** |  | [optional] 
+**id_global** | **object** |  | [optional] 
+**id_blocks** | **object** |  | [optional] 
 **encoding_id** | [**EncodingIdDto**](EncodingIdDto.md) |  | [optional] 
 **record_secret** | **str** |  | [optional] 
 **order_id** | **int** |  | [optional] 

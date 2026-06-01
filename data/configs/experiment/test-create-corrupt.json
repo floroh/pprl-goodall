@@ -1,0 +1,59 @@
+[
+  {
+    "name": "test-datasets",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "corruption",
+            "config": {
+              "inputDatasetId": 5000,
+              "configCreator": {
+                "name": "TEST",
+                "override": {
+                  "@class": ".DataSetGeneratorConfig",
+                  "originalSize": 2000,
+                  "modifiedSize": 2000,
+                  "sourceOverlap": 0.2
+                } 
+              }
+            }
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "variations": [
+        {
+          "type": "corruption:config_creator.name",
+          "replacements": [
+            "TEST"
+          ]
+        },
+        {
+          "type": "corruption:config_creator.override.size",
+          "replacements": [
+            10000,
+            1000
+          ]
+        },
+        {
+          "type": "corruption:config_creator.override.source_overlap",
+          "replacements": [
+            0.3,
+            0.1
+          ]
+        },
+        {
+          "type": "corruption:config_creator.override.seed",
+          "replacements": [
+            123
+          ]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "GermanGenerator-Corruption"
+      }
+    }
+  }
+]

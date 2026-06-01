@@ -1,36 +1,26 @@
-import streamlit
+import numpy as np
 from plotly.graph_objs import Figure
-from pprl_linkage_unit_service_api_client import BatchMatchProjectDto
 
-from goodall.api_helper.lu_api import (
-    get_projects,
-    get_project,
-    get_record_pairs,
-    delete_project,
-    get_record_pairs_as_dataframe,
+from goodall.ui.components.api.lu_api_streamlit import (
+    get_record_pairs_as_dataframe_cached,
 )
-from goodall.api_helper.parser import parse_record_pair_df, get_project_quality_results
-from goodall.ui.components.projects import (
-    project_refresh,
-    project_id_colored_button,
-    project_selector,
-    get_indexed_state_key,
-    prepareProjectsForDisplay,
-)
-from goodall.result_analysis.pair_evaluation import *
-from goodall.ui.streamlit_utils import del_state_if_exists, get_state_or_default
-from goodall.utils import downsampling_if_possible
-from goodall.ui.PPRL_Services_UI import *
+from goodall.api_helper.parser import parse_record_pair_df
+from goodall.ui.streamlit_utils import get_state_or_default
 import pandas as pd
 import streamlit as st
-import plotly.express as px
 import plotly.graph_objects as go
 
 referenceLineStyle = dict(color="Gray", width=2)
 color_map_type_change = {"TT": "blue", "TF": "red", "FT": "green", "FF": "orange"}
-color_map_match_grade_change = {"CC": "blue", "CN": "yellow", "NC": "orange", "NN": "blue"}
+color_map_match_grade_change = {
+    "CC": "blue",
+    "CN": "yellow",
+    "NC": "orange",
+    "NN": "blue",
+}
 
-def prepare_for_merge(df: DataFrame):
+
+def prepare_for_merge(df: pd.DataFrame):
     if df.empty:
         return df
     df["i0"] = df["id0"].apply(lambda id: id["source"] + "-" + id["local"])
@@ -59,15 +49,17 @@ def pos_neg_result(groupedStats: pd.DataFrame, type: str) -> float:
     return diff
 
 
-def count_type_changes(dfM: DataFrame):
+def count_type_changes(dfM: pd.DataFrame):
     stats = compute_change_statistics(dfM)
     col1, col2, col3 = st.columns([1, 2, 2])
     with col1:
         st.dataframe(stats, hide_index=True)
 
     # labels = ['TP_x', 'FP_x', 'FN_x', 'TN_x', 'TP_y', 'FP_y', 'FN_y', 'TN_y']
-    # source_indices = [labels.index(current_type + '_x') for current_type in stats['type_x']]
-    # target_indices = [labels.index(current_type + '_y') for current_type in stats['type_y']]
+    # source_indices = [labels.index(current_type + '_x')
+    #                   for current_type in stats['type_x']]
+    # target_indices = [labels.index(current_type + '_y')
+    #                   for current_type in stats['type_y']]
 
     with col2:
         fig = plot_type_correspondences(stats)
@@ -95,12 +87,10 @@ def plot_type_changes(stats):
     changeOnlyStats = stats[stats["type_x"] != stats["type_y"]]
     labels = ["TP_x", "FP_x", "FN_x", "TN_x", "TP_y", "FP_y", "FN_y", "TN_y"]
     source_indices = [
-        labels.index(current_type + "_x")
-        for current_type in changeOnlyStats["type_x"]
+        labels.index(current_type + "_x") for current_type in changeOnlyStats["type_x"]
     ]
     target_indices = [
-        labels.index(current_type + "_y")
-        for current_type in changeOnlyStats["type_y"]
+        labels.index(current_type + "_y") for current_type in changeOnlyStats["type_y"]
     ]
     link_colors = changeOnlyStats[["type_x", "type_y"]].apply(
         lambda x: color_map_type_change[x["type_x"][0] + x["type_y"][0]], axis=1
@@ -132,7 +122,8 @@ def plot_type_changes(stats):
 def plot_type_correspondences(stats) -> Figure:
     labels = ["Match", "Non-Match", "Match", "Non-Match"]
     source_indices = [
-        labels[:2].index(("Match" if current_type in ["TP", "FP"] else "Non-Match")) for current_type in stats["type_x"]
+        labels[:2].index(("Match" if current_type in ["TP", "FP"] else "Non-Match"))
+        for current_type in stats["type_x"]
     ]
     target_indices = [
         labels[2:].index(("Match" if current_type in ["TP", "FP"] else "Non-Match")) + 2
@@ -158,7 +149,7 @@ def plot_type_correspondences(stats) -> Figure:
                     value=stats["size"],
                     color=link_colors,
                 ),
-                textfont={'color': 'white'},
+                textfont={"color": "white"},
             )
         ]
     )
@@ -166,19 +157,23 @@ def plot_type_correspondences(stats) -> Figure:
     fig.update_layout(title_text="Prediction changes", font_size=15)
     return fig
 
+
 def plot_match_grade_correspondences(stats) -> Figure:
     labels_for_indexing = ["CERTAIN_MATCH", "NON_MATCH", "CERTAIN_MATCH", "NON_MATCH"]
     labels = ["Match", "Non-Match", "Match", "Non-Match"]
     left_column = "matchGrade_x"
     right_column = "matchGrade_y"
     source_indices = [
-        labels_for_indexing[:2].index(current_type) for current_type in stats[left_column]
+        labels_for_indexing[:2].index(current_type)
+        for current_type in stats[left_column]
     ]
     target_indices = [
-        labels_for_indexing[2:].index(current_type) + 2 for current_type in stats[right_column]
+        labels_for_indexing[2:].index(current_type) + 2
+        for current_type in stats[right_column]
     ]
     link_colors = stats[[left_column, right_column]].apply(
-        lambda x: color_map_match_grade_change[x[left_column][0] + x[right_column][0]], axis=1
+        lambda x: color_map_match_grade_change[x[left_column][0] + x[right_column][0]],
+        axis=1,
     )
     fig = go.Figure(
         data=[
@@ -197,7 +192,7 @@ def plot_match_grade_correspondences(stats) -> Figure:
                     value=stats["size"],
                     color=link_colors,
                 ),
-                textfont={'color': 'white'},
+                textfont={"color": "white"},
             )
         ]
     )
@@ -205,7 +200,7 @@ def plot_match_grade_correspondences(stats) -> Figure:
     return fig
 
 
-def analyse_changes_by_type(dfM: DataFrame, numeric_column: str):
+def analyse_changes_by_type(dfM: pd.DataFrame, numeric_column: str):
     col_x = numeric_column + "_x"
     col_y = numeric_column + "_y"
     col_shift_binary = numeric_column + "_shift_binary"
@@ -231,21 +226,25 @@ def analyse_changes_by_type(dfM: DataFrame, numeric_column: str):
 @st.cache_data
 def get_merged_record_pair_df(
     prj_id_0, prj_id_1, left_properties=None, right_properties=None
-) -> DataFrame:
+) -> pd.DataFrame:
     if right_properties is None:
         right_properties = []
     if left_properties is None:
         left_properties = []
     with st.spinner("Fetching record pairs..."):
-        df_record_pairs = get_record_pairs_as_dataframe(prj_id_0, left_properties)
+        df_record_pairs = get_record_pairs_as_dataframe_cached(
+            prj_id_0, left_properties
+        )
     with st.spinner("Fetching record pairs 2..."):
-        df_record_pairs2 = get_record_pairs_as_dataframe(prj_id_1, right_properties)
+        df_record_pairs2 = get_record_pairs_as_dataframe_cached(
+            prj_id_1, right_properties
+        )
     parse_record_pair_df(df_record_pairs)
     parse_record_pair_df(df_record_pairs2)
     return merge_record_pair_df(df_record_pairs, df_record_pairs2)
 
 
-def merge_record_pair_df(df: DataFrame, df2: DataFrame) -> DataFrame:
+def merge_record_pair_df(df: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     df = prepare_for_merge(df)
     df2 = prepare_for_merge(df2)
     if df.empty:
@@ -257,5 +256,3 @@ def merge_record_pair_df(df: DataFrame, df2: DataFrame) -> DataFrame:
     dfM.insert(3, "similarity_diff", dfM["similarity_y"] - dfM["similarity_x"])
     dfM.insert(7, "probability_diff", dfM["probability_y"] - dfM["probability_x"])
     return dfM
-
-

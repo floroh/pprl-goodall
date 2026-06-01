@@ -26,10 +26,31 @@ class TestDatasetAnalysisApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+    def test_delete_tags(self) -> None:
+        """Test case for delete_tags
+
+        Delete all tags of a dataset from database
+        """
+        pass
+
     def test_get_analysis_types(self) -> None:
         """Test case for get_analysis_types
 
         Get a list of all supported analysis types
+        """
+        pass
+
+    def test_get_tags(self) -> None:
+        """Test case for get_tags
+
+        Get tags from database
+        """
+        pass
+
+    def test_get_tags_by_origin(self) -> None:
+        """Test case for get_tags_by_origin
+
+        Get tags from database
         """
         pass
 
@@ -40,10 +61,24 @@ class TestDatasetAnalysisApi(unittest.TestCase):
         """
         pass
 
+    def test_run_pair_analysis(self) -> None:
+        """Test case for run_pair_analysis
+
+        Get tags for pairs
+        """
+        pass
+
     def test_run_validation_analysis(self) -> None:
         """Test case for run_validation_analysis
 
         Run a specific analysis type
+        """
+        pass
+
+    def test_save_tags(self) -> None:
+        """Test case for save_tags
+
+        Add tags to database
         """
         pass
 

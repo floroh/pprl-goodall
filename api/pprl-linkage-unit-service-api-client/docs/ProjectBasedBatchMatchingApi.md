@@ -1,6 +1,6 @@
 # pprl_linkage_unit_service_api_client.ProjectBasedBatchMatchingApi
 
-All URIs are relative to *http://localhost:8082*
+All URIs are relative to *http://localhost:8182*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**run_for_new**](ProjectBasedBatchMatchingApi.md#run_for_new) | **POST** /project/runForNew/{projectId} | Run a linkage project for new records
 [**run_next**](ProjectBasedBatchMatchingApi.md#run_next) | **POST** /project/run/{projectId} | Run (the next phase of) a linkage project
 [**run_parts**](ProjectBasedBatchMatchingApi.md#run_parts) | **POST** /project/run | Execute (parts of) a linkage project
+[**update1**](ProjectBasedBatchMatchingApi.md#update1) | **PUT** /project/ | Update a linkage project
 
 
 # **create**
@@ -29,10 +30,10 @@ from pprl_linkage_unit_service_api_client.models.batch_match_project_dto import 
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -94,10 +95,10 @@ import pprl_linkage_unit_service_api_client
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -159,10 +160,10 @@ import pprl_linkage_unit_service_api_client
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -219,10 +220,10 @@ from pprl_linkage_unit_service_api_client.models.batch_match_project_dto import 
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -285,10 +286,10 @@ from pprl_linkage_unit_service_api_client.models.batch_match_project_dto import 
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -354,10 +355,10 @@ from pprl_linkage_unit_service_api_client.models.batch_match_project_execution_d
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -420,10 +421,10 @@ from pprl_linkage_unit_service_api_client.models.batch_match_project_dto import 
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -486,10 +487,10 @@ from pprl_linkage_unit_service_api_client.models.batch_match_project_dto import 
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -553,10 +554,10 @@ from pprl_linkage_unit_service_api_client.models.batch_match_project_execution_d
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -583,6 +584,72 @@ with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **batch_match_project_execution_dto** | [**BatchMatchProjectExecutionDto**](BatchMatchProjectExecutionDto.md)|  | 
+
+### Return type
+
+[**BatchMatchProjectDto**](BatchMatchProjectDto.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **update1**
+> BatchMatchProjectDto update1(batch_match_project_dto)
+
+Update a linkage project
+
+### Example
+
+
+```python
+import pprl_linkage_unit_service_api_client
+from pprl_linkage_unit_service_api_client.models.batch_match_project_dto import BatchMatchProjectDto
+from pprl_linkage_unit_service_api_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to http://localhost:8182
+# See configuration.py for a list of all supported configuration parameters.
+configuration = pprl_linkage_unit_service_api_client.Configuration(
+    host = "http://localhost:8182"
+)
+
+
+# Enter a context with an instance of the API client
+with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = pprl_linkage_unit_service_api_client.ProjectBasedBatchMatchingApi(api_client)
+    batch_match_project_dto = pprl_linkage_unit_service_api_client.BatchMatchProjectDto() # BatchMatchProjectDto | 
+
+    try:
+        # Update a linkage project
+        api_response = api_instance.update1(batch_match_project_dto)
+        print("The response of ProjectBasedBatchMatchingApi->update1:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ProjectBasedBatchMatchingApi->update1: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **batch_match_project_dto** | [**BatchMatchProjectDto**](BatchMatchProjectDto.md)|  | 
 
 ### Return type
 

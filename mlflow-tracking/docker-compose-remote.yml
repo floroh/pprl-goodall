@@ -1,0 +1,14 @@
+networks:
+  traefik_default:
+    external: true
+
+services:
+  mlflow-server:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mlflow.rule=Host(`mlflow.DOMAIN.TLD`)"
+      - "traefik.http.routers.mlflow.entrypoints=web-secure"
+      - "traefik.http.routers.mlflow.tls.certresolver=letsencrypt"
+      - "traefik.http.services.mlflow-service.loadbalancer.server.port=5000"
+    networks:
+      - traefik_default

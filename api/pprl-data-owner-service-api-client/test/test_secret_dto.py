@@ -35,13 +35,13 @@ class TestSecretDto(unittest.TestCase):
         model = SecretDto()
         if include_optional:
             return SecretDto(
-                project = '',
-                secret = ''
+                project = '0',
+                secret = '0'
             )
         else:
             return SecretDto(
-                project = '',
-                secret = '',
+                project = '0',
+                secret = '0',
         )
         """
 

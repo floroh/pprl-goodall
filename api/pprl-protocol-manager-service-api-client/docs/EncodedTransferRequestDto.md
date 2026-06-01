@@ -5,7 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data_owner_dataset_id** | **int** |  | [optional] 
+**data_owner_dataset_id** | **int** |  | 
+**linkage_unit_dataset_id** | **int** |  | [optional] 
 **encoding** | [**EncodingIdDto**](EncodingIdDto.md) |  | 
 
 ## Example

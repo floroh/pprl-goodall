@@ -1,6 +1,6 @@
 # pprl_data_owner_service_api_client.ProjectSecretManagementApi
 
-All URIs are relative to *http://localhost:8081*
+All URIs are relative to *http://localhost:8181*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -24,10 +24,10 @@ from pprl_data_owner_service_api_client.models.secret_dto import SecretDto
 from pprl_data_owner_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8081
+# Defining the host is optional and defaults to http://localhost:8181
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_data_owner_service_api_client.Configuration(
-    host = "http://localhost:8081"
+    host = "http://localhost:8181"
 )
 
 
@@ -87,10 +87,10 @@ import pprl_data_owner_service_api_client
 from pprl_data_owner_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8081
+# Defining the host is optional and defaults to http://localhost:8181
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_data_owner_service_api_client.Configuration(
-    host = "http://localhost:8081"
+    host = "http://localhost:8181"
 )
 
 
@@ -148,10 +148,10 @@ import pprl_data_owner_service_api_client
 from pprl_data_owner_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8081
+# Defining the host is optional and defaults to http://localhost:8181
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_data_owner_service_api_client.Configuration(
-    host = "http://localhost:8081"
+    host = "http://localhost:8181"
 )
 
 
@@ -212,10 +212,10 @@ from pprl_data_owner_service_api_client.models.secret_dto import SecretDto
 from pprl_data_owner_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8081
+# Defining the host is optional and defaults to http://localhost:8181
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_data_owner_service_api_client.Configuration(
-    host = "http://localhost:8081"
+    host = "http://localhost:8181"
 )
 
 

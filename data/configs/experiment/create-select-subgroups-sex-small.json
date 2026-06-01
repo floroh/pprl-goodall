@@ -1,0 +1,68 @@
+[
+  {
+    "name": "datasets-usvr-subgroups",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "selection",
+            "config_path": "../dataset-creation/selection/usvr-content-filter-female-noL.json"
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "variations": [
+        {
+          "type": "selection:usvr_selection_config.ordering_seed",
+          "replacements": ["abcd", "efgh"]
+        },
+        {
+          "type": "selection:size",
+          "replacements": [10000]
+        },
+        {
+          "type": "selection:overlap",
+          "replacements": [0.3, 0.1]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR",
+        "creation.subgroup": "SEX=female"
+      }
+    }
+  },
+  {
+    "name": "datasets-usvr-subgroups-v4",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "selection",
+            "config_path": "../dataset-creation/selection/usvr-content-filter-male-noL.json"
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "variations": [
+        {
+          "type": "selection:usvr_selection_config.ordering_seed",
+          "replacements": ["abcd", "efgh"]
+        },
+        {
+          "type": "selection:size",
+          "replacements": [10000]
+        },
+        {
+          "type": "selection:overlap",
+          "replacements": [0.3, 0.1]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR",
+        "creation.subgroup": "SEX=male"
+      }
+    }
+  }
+]

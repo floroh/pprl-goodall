@@ -17,21 +17,25 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List, Optional
+from typing_extensions import Annotated
+from pprl_protocol_manager_service_api_client.models.dataset_dto import DatasetDto
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class DatasetCsvDto(BaseModel):
     """
     DatasetCsvDto
     """ # noqa: E501
-    path: Optional[StrictStr] = None
-    dataset_id: Optional[StrictInt] = Field(default=None, alias="datasetId")
-    __properties: ClassVar[List[str]] = ["path", "datasetId"]
+    path: Annotated[str, Field(min_length=1, strict=True)]
+    dataset_dto: Optional[DatasetDto] = Field(default=None, alias="datasetDto")
+    __properties: ClassVar[List[str]] = ["path", "datasetDto"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -43,8 +47,7 @@ class DatasetCsvDto(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -69,6 +72,9 @@ class DatasetCsvDto(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of dataset_dto
+        if self.dataset_dto:
+            _dict['datasetDto'] = self.dataset_dto.to_dict()
         return _dict
 
     @classmethod
@@ -82,7 +88,7 @@ class DatasetCsvDto(BaseModel):
 
         _obj = cls.model_validate({
             "path": obj.get("path"),
-            "datasetId": obj.get("datasetId")
+            "datasetDto": DatasetDto.from_dict(obj["datasetDto"]) if obj.get("datasetDto") is not None else None
         })
         return _obj
 

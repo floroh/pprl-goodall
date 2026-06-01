@@ -26,6 +26,13 @@ class TestDataOwnerPreparationApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+    def test_add_generated_dataset(self) -> None:
+        """Test case for add_generated_dataset
+
+        Insert dataset from generator
+        """
+        pass
+
     def test_insert_from_csv(self) -> None:
         """Test case for insert_from_csv
 

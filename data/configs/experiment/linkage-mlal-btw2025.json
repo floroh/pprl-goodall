@@ -1,0 +1,66 @@
+[
+  {
+    "name": "linkage-mlal",
+    "protocol_config": {
+      "config_path": "../linkage/protocol/mlal-b200-e0.0.json",
+      "input": {
+        "mlflow_search_experiments": ["datasets-btw2025"],
+        "mlflow_filter_string": "params.dataset_name LIKE '%min1E%'"
+      },
+      "variations": [
+        {
+          "type": "protocol:copy",
+          "replacements": [0, 1, 2]
+        },
+        {
+          "type": "protocol:layer[PPCR].error_rate",
+          "replacements": [0.2]
+        },
+        {
+          "type": "protocol:layer[PPCR].budget",
+          "replacements": [200, 300]
+        },
+        {
+          "type": "protocol:layer[RBF].initial_threshold",
+          "replacements": [0.7, 0.84, 0.02],
+          "as_range": true
+        }
+      ],
+      "tags": {
+        "linkage.method": "mlal"
+      }
+    }
+  },
+  {
+    "name": "linkage-mlal",
+    "protocol_config": {
+      "config_path": "../linkage/protocol/mlal-b200-e0.0.json",
+      "input": {
+        "mlflow_search_experiments": ["datasets-btw2025"],
+        "mlflow_filter_string": "params.dataset_name LIKE '%min1E%'"
+      },
+      "variations": [
+        {
+          "type": "protocol:copy",
+          "replacements": [0, 1, 2]
+        },
+        {
+          "type": "protocol:layer[PPCR].error_rate",
+          "replacements": [0.0, 0.1, 0.2]
+        },
+        {
+          "type": "protocol:layer[PPCR].budget",
+          "replacements": [100]
+        },
+        {
+          "type": "protocol:layer[RBF].initial_threshold",
+          "replacements": [0.7, 0.84, 0.02],
+          "as_range": true
+        }
+      ],
+      "tags": {
+        "linkage.method": "mlal"
+      }
+    }
+  }
+]

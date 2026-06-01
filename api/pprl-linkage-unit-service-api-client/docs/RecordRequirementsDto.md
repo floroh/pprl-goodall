@@ -1,6 +1,5 @@
 # RecordRequirementsDto
 
-Description of requirements for this scheme
 
 ## Properties
 

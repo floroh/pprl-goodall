@@ -1,6 +1,6 @@
 # pprl_linkage_unit_service_api_client.LinkageResultAnalysisApi
 
-All URIs are relative to *http://localhost:8082*
+All URIs are relative to *http://localhost:8182*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -24,10 +24,10 @@ from pprl_linkage_unit_service_api_client.models.result_request import ResultReq
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -91,10 +91,10 @@ from pprl_linkage_unit_service_api_client.models.match_result_analysis_request_d
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -158,10 +158,10 @@ from pprl_linkage_unit_service_api_client.models.analysis_result_dto import Anal
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 

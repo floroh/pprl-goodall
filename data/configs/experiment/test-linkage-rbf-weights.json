@@ -1,0 +1,58 @@
+[
+  {
+    "name": "test-linkage",
+    "protocol_config": {
+      "input": {
+        "mlflow_search_experiments": ["test-datasets"],
+        "mlflow_filter_string": ""
+      },
+      "config": {
+        "layers": [
+          {
+            "name": "RBF",
+            "matcher_method": "DBSLeipzig/RBF/Train/PGTB",
+            "encoding_method": "DBSLeipzig/RBF/NCVR-F-static-k",
+            "initial_threshold": 0.75,
+            "attributeWeightMethod": "wFS"
+          }
+        ]
+      },
+      "variations": [
+        {
+          "type": "protocol:layer[RBF].initial_threshold",
+          "replacements": [0.75]
+        },
+        {
+          "type": "protocol:layer[RBF].attribute_weight_method",
+          "replacements": ["Static"]
+        },
+        {
+          "type": "protocol:layer[RBF].initial_attribute_weights",
+          "replacements": [
+            {
+              "FIRSTNAME": 1,
+              "LASTNAME": 1,
+              "YEAROFBIRTH": 1,
+              "CITY": 1,
+              "PLZ": 1,
+              "MIDDLENAME": 1,
+              "PLACEOFBIRTH": 1
+            },
+            {
+              "FIRSTNAME": 3,
+              "LASTNAME": 3,
+              "YEAROFBIRTH": 3,
+              "CITY": 1,
+              "PLZ": 1,
+              "MIDDLENAME": 2,
+              "PLACEOFBIRTH": 2
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "linkage.method": "rbf"
+      }
+    }
+  }
+]

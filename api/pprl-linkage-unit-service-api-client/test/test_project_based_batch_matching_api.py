@@ -89,6 +89,13 @@ class TestProjectBasedBatchMatchingApi(unittest.TestCase):
         """
         pass
 
+    def test_update1(self) -> None:
+        """Test case for update1
+
+        Update a linkage project
+        """
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

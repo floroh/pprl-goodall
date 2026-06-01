@@ -1,6 +1,6 @@
 # pprl_protocol_manager_service_api_client.PPRLProtocolManagerApi
 
-All URIs are relative to *http://localhost:8085*
+All URIs are relative to *http://localhost:8185*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -30,10 +30,10 @@ from pprl_protocol_manager_service_api_client.models.multi_layer_protocol import
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -95,10 +95,10 @@ import pprl_protocol_manager_service_api_client
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -154,10 +154,10 @@ import pprl_protocol_manager_service_api_client
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -218,10 +218,10 @@ from pprl_protocol_manager_service_api_client.models.multi_layer_protocol import
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -280,10 +280,10 @@ from pprl_protocol_manager_service_api_client.models.multi_layer_protocol import
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -346,10 +346,10 @@ from pprl_protocol_manager_service_api_client.models.multi_layer_protocol import
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -413,10 +413,10 @@ from pprl_protocol_manager_service_api_client.models.protocol_execution_dto impo
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -479,10 +479,10 @@ from pprl_protocol_manager_service_api_client.models.multi_layer_protocol import
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -545,10 +545,10 @@ from pprl_protocol_manager_service_api_client.models.encoded_transfer_request_dt
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 
@@ -611,10 +611,10 @@ from pprl_protocol_manager_service_api_client.models.multi_layer_protocol import
 from pprl_protocol_manager_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8085
+# Defining the host is optional and defaults to http://localhost:8185
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_protocol_manager_service_api_client.Configuration(
-    host = "http://localhost:8085"
+    host = "http://localhost:8185"
 )
 
 

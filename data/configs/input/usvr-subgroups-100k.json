@@ -1,0 +1,6 @@
+{
+  "mlflow_search_experiments": [
+    "datasets-usvr-subgroups"
+  ],
+  "mlflow_filter_string": "metrics.`size.total` = 100000"
+}

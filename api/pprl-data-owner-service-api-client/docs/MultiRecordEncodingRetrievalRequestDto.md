@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **encoding_id** | [**EncodingIdDto**](EncodingIdDto.md) |  | [optional] 
 **record_ids** | [**List[RecordIdDto]**](RecordIdDto.md) | List of record ids to encode. If empty, all records of the dataset are encoded. | [optional] 
 **dataset_id** | **int** |  | [optional] 
+**dataset_source** | **str** |  | [optional] 
 
 ## Example
 

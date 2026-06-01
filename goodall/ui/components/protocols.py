@@ -1,22 +1,21 @@
-
+import pandas as pd
 import streamlit as st
 import pprl_linkage_unit_service_api_client as lu
 
 from pprl_protocol_manager_service_api_client import MultiLayerProtocol, ReportGroup
-from st_link_analysis import NodeStyle, EdgeStyle, st_link_analysis, Event
+from st_link_analysis import NodeStyle, EdgeStyle, st_link_analysis
 from streamlit import session_state as sts
 
-
-from goodall.api_helper import pm_api, lu_api
+from goodall.api_helper import pm_api
 from goodall.api_helper.parser import (
     parse_serialized_table_to_dataframe,
 )
 from goodall.api_helper.pprl_clients import Service
-from goodall.result_analysis.pair_evaluation import *
-from goodall.ui.PPRL_Services_UI import *
-from goodall.ui.components.datasets import get_dataset_ids, get_dataset_analysis_result
+from goodall.ui.components.api import lu_api_streamlit
+from goodall.ui.components.datasets import get_dataset_ids, get_dataset_analysis_result_cached, \
+    render_data_owner_dataset_description
 from goodall.ui.components.project_comparison import get_merged_record_pair_df
-from goodall.ui.pages.Datasets import render_data_owner_dataset_description
+from goodall.ui.constants import SELECTED_PROTOCOL_ID, NUMBER_OF_SHOW_PROJECTS
 from goodall.ui.streamlit_utils import del_state_if_exists
 
 
@@ -34,7 +33,7 @@ def prepareProtocolsForDisplay(protocols: list[MultiLayerProtocol]):
         sts[NUMBER_OF_SHOW_PROJECTS] = sts[NUMBER_OF_SHOW_PROJECTS] + 10
 
     if not selAllProtocols:
-        protocols = protocols[-sts[NUMBER_OF_SHOW_PROJECTS]:]
+        protocols = protocols[-sts[NUMBER_OF_SHOW_PROJECTS] :]
     st.text("Showing last " + str(len(protocols)) + " protocols")
     return protocols
 
@@ -45,9 +44,12 @@ def btn_protocol_refresh():
         protocol_refresh()
         st.rerun()
 
+
 def btn_protocol_unselect(sidebar: bool = False):
     if sidebar:
-        btn = st.sidebar.button("Unselect active protocol", key="unselect_protocol_side")
+        btn = st.sidebar.button(
+            "Unselect active protocol", key="unselect_protocol_side"
+        )
     else:
         btn = st.button("Unselect active protocol", key="unselect_protocol")
     if btn:
@@ -55,58 +57,82 @@ def btn_protocol_unselect(sidebar: bool = False):
 
 
 def protocol_refresh():
-    st.session_state["protocols"] = pm_api.get_protocols()
+    sts["protocols"] = pm_api.get_protocols()
 
 
-def section_create_protocol(show_only_datasets_with_name: bool = True):
-    col1, col2, = st.columns([1, 3])
+def section_create_protocol(
+    show_only_datasets_with_name: bool = True,
+    dataset_name_mapping: dict[int, str] | None = None,
+    protocol_options: list[str] | None = None,
+):
+    if dataset_name_mapping is None:
+        dataset_name_mapping = {}
+    if protocol_options is None:
+        protocol_options = ["RBF", "RBF-ABF-PPCR", "ABF-PPCR", "RBF-PPCR"]
+    col1, col2 = st.columns([1, 3])
     with col1:
         dataset_ids = get_dataset_ids(Service.Data_owner_1)
-        dataset_ids = [did for did in dataset_ids if did != -1]
+        dataset_ids = [
+            did for did in dataset_ids if did != -1
+        ]  # Remove negative/invalid ids
         dataset_name_mapping = {
-            2010: "North Carolina Voter Registry 10k-10k-1k",
-            2012: "North Carolina Voter Registry 10k-10k-2k",
-            2032: "North Carolina Voter Registry 50k-50k-10"
+            key: dataset_name_mapping[key]
+            for key in dataset_name_mapping
+            if key in dataset_ids
         }
-        if show_only_datasets_with_name:
-            dataset_names = [
-                dataset_name_mapping[
-                    dataset_id] if dataset_id in dataset_name_mapping else str(dataset_id)
-                for dataset_id in dataset_ids
-                if dataset_id in dataset_name_mapping
-            ]
-        else:
-            dataset_names = [str(dataset_id) for dataset_id in dataset_ids]
-        if dataset_names is None or len(dataset_names) == 0:
+        if not show_only_datasets_with_name:
+            for dataset_id in dataset_ids:
+                if dataset_id not in dataset_name_mapping:
+                    dataset_name_mapping[dataset_id] = str(dataset_id)
+
+        if dataset_name_mapping is None or len(dataset_name_mapping) == 0:
             st.warning("No datasets available")
-            st.stop()
-        sel_dataset = st.selectbox("Select dataset",
-                                   dataset_names, index=0)
-        sel_dataset_id = dataset_ids[dataset_names.index(sel_dataset)]
+            return
+        sel_dataset_id = st.selectbox(
+            "Select dataset",
+            dataset_name_mapping,
+            index=0,
+            format_func=dataset_name_mapping.get,
+        )
         # st.text(sel_dataset_id)
+        # options = ["RBF", "RBF-ABF-PPCR", "ABF-PPCR", "RBF-PPCR", "ABF"]
         options = ["RBF", "RBF-ABF-PPCR", "ABF-PPCR", "RBF-PPCR"]
-        select_protocol_type = st.segmented_control("Select protocol type", options,
-                                                    selection_mode="single",
-                                                    default=options[0])
+        select_protocol_type = st.segmented_control(
+            "Select protocol type", options, selection_mode="single", default=options[0]
+        )
         match select_protocol_type:
             case "RBF" | "RBF-ABF-PPCR" | "RBF-PPCR":
-                sel_init_thr = st.slider("Initial threshold",
-                                         min_value=0.6,
-                                         max_value=1.0,
-                                         step=0.05, value=0.8)
+                sel_init_thr = st.slider(
+                    "Initial threshold",
+                    min_value=0.6,
+                    max_value=1.0,
+                    step=0.05,
+                    value=0.8,
+                )
         btnCreateProtocol = st.button("Create protocol", key="create_protocol")
         if btnCreateProtocol:
             match select_protocol_type:
+                case "RBF":
+                    protocol = pm_api.create_example_rbf_layer_protocol(
+                        do_dataset_id=sel_dataset_id,
+                        lu_dataset_id=sel_dataset_id + 200,
+                        initial_threshold=sel_init_thr,
+                    )
                 case "RBF-ABF-PPCR":
                     protocol = pm_api.create_example_3_layer_protocol(
                         do_dataset_id=sel_dataset_id,
                         lu_dataset_id=sel_dataset_id + 200,
                         initial_threshold=sel_init_thr,
                         ppcr_budget=100,
-                        ppcr_batch_size_config=[5, 20]
+                        ppcr_batch_size_config=[20, 5],
                     )
                 case "ABF-PPCR":
                     protocol = pm_api.create_example_abf_ppcr_protocol(
+                        do_dataset_id=sel_dataset_id,
+                        lu_dataset_id=sel_dataset_id + 100,
+                    )
+                case "ABF":
+                    protocol = pm_api.create_example_abf_protocol(
                         do_dataset_id=sel_dataset_id,
                         lu_dataset_id=sel_dataset_id + 100,
                     )
@@ -114,16 +140,16 @@ def section_create_protocol(show_only_datasets_with_name: bool = True):
                     protocol = pm_api.create_example_rbf_ppcr_layer_protocol(
                         do_dataset_id=sel_dataset_id,
                         lu_dataset_id=sel_dataset_id + 200,
-                        ppcr_batch_size_config=[10]
+                        ppcr_batch_size_config=[10],
                     )
             # st.success("Created new protocol with id " + protocol.protocol_id)
             st.success("Created new protocol")
             del_state_if_exists("auto_continue_protocol")
             del_state_if_exists("stop_auto_continue")
             del_state_if_exists("evaluation_mode")
-            get_dataset_analysis_result.clear()
+            get_dataset_analysis_result_cached.clear()
             get_merged_record_pair_df.clear()
-            lu_api.get_record_pairs.clear()
+            lu_api_streamlit.get_record_pairs_cached.clear()
             sts[SELECTED_PROTOCOL_ID] = protocol.protocol_id
             protocol_refresh()
     with col2:
@@ -135,8 +161,9 @@ def section_create_protocol(show_only_datasets_with_name: bool = True):
 
 def btn_select_most_recent_protocol_selector(index: int = 0):
     protocol_refresh()
-    btnSelectNewestProtocol = st.sidebar.button("Select last protocol",
-                                                key="select_most_recent_protocol")
+    btnSelectNewestProtocol = st.sidebar.button(
+        "Select last protocol", key="select_most_recent_protocol"
+    )
     if btnSelectNewestProtocol:
         protocols = st.session_state["protocols"]
         state_key = get_indexed_state_key(SELECTED_PROTOCOL_ID, index)
@@ -167,7 +194,7 @@ def get_indexed_state_key(state_key: str, index: int = 0) -> str:
 
 
 def btn_protocol_id_colored(
-        protocol_id: str, state_key: str = SELECTED_PROTOCOL_ID, key: str = None
+    protocol_id: str, state_key: str = SELECTED_PROTOCOL_ID, key: str = None
 ):
     if state_key in st.session_state:
         if st.session_state[state_key] == protocol_id:
@@ -219,22 +246,25 @@ def render_report_groups(report_groups: list[ReportGroup]):
                             )
                             col1, col2 = st.columns(2)
                             with col1:
-                                st.dataframe(df_report, use_container_width=True)
+                                st.dataframe(df_report)
                             with col2:
                                 st.text("Additional information")
 
 
-
-
-def rename_attributes(attribute_name_replacements: dict[str, str],
-                      records: list[lu.RecordDto] = [],
-                      pairs: list[lu.RecordPairDto] = []):
+def rename_attributes(
+    attribute_name_replacements: dict[str, str],
+    records: list[lu.RecordDto] = [],
+    pairs: list[lu.RecordPairDto] = [],
+):
     for old, new in attribute_name_replacements.items():
         for record in records:
             if old in record.attributes:
                 record.attributes[new] = record.attributes.pop(old)
         for pair in pairs:
-            if pair.attribute_similarities is not None and old in pair.attribute_similarities:
+            if (
+                pair.attribute_similarities is not None
+                and old in pair.attribute_similarities
+            ):
                 pair.attribute_similarities[new] = pair.attribute_similarities.pop(old)
 
 
@@ -247,22 +277,67 @@ def get_protocol_step_graph(protocol: MultiLayerProtocol):
             {"data": {"id": 4, "label": "PPCR", "name": "PPCR"}},
         ],
         "edges": [
-            {"data": {"id": 6, "label": "REPORT LABELS",
-                      "description": "report pair labels", "source": 3, "target": 2}},
-            {"data": {"id": 7, "label": "PROVIDE REENCODED RECORDS", "source": 1,
-                      "target": 3}},
-            {"data": {"id": 9, "label": "Fetch ids of uncertain pairs", "source": 2,
-                      "target": 1}},
-            {"data": {"id": 10, "label": "RECLASSIFY",
-                      "description": "Reclassify pairs", "source": 2, "target": 2}},
-            {"data": {"id": 11, "label": "RECLASSIFY",
-                      "description": "Reclassify pairs", "source": 3, "target": 3}},
-            {"data": {"id": 12, "label": "UPDATE_MODEL",
-                      "description": "Update classification model", "source": 2,
-                      "target": 2}},
-            {"data": {"id": 13, "label": "UPDATE_MODEL",
-                      "description": "Update classification model", "source": 3,
-                      "target": 3}},
+            {
+                "data": {
+                    "id": 6,
+                    "label": "REPORT LABELS",
+                    "description": "report pair labels",
+                    "source": 3,
+                    "target": 2,
+                }
+            },
+            {
+                "data": {
+                    "id": 7,
+                    "label": "PROVIDE REENCODED RECORDS",
+                    "source": 1,
+                    "target": 3,
+                }
+            },
+            {
+                "data": {
+                    "id": 9,
+                    "label": "Fetch ids of uncertain pairs",
+                    "source": 2,
+                    "target": 1,
+                }
+            },
+            {
+                "data": {
+                    "id": 10,
+                    "label": "RECLASSIFY",
+                    "description": "Reclassify pairs",
+                    "source": 2,
+                    "target": 2,
+                }
+            },
+            {
+                "data": {
+                    "id": 11,
+                    "label": "RECLASSIFY",
+                    "description": "Reclassify pairs",
+                    "source": 3,
+                    "target": 3,
+                }
+            },
+            {
+                "data": {
+                    "id": 12,
+                    "label": "UPDATE_MODEL",
+                    "description": "Update classification model",
+                    "source": 2,
+                    "target": 2,
+                }
+            },
+            {
+                "data": {
+                    "id": 13,
+                    "label": "UPDATE_MODEL",
+                    "description": "Update classification model",
+                    "source": 3,
+                    "target": 3,
+                }
+            },
         ],
     }
 
@@ -273,20 +348,45 @@ def get_protocol_step_graph(protocol: MultiLayerProtocol):
         NodeStyle("ABF", "#FF7F3E", "name", "key"),
         NodeStyle("PPCR", "#2A629A", "name", "person"),
     ]
-    style = st.sidebar.selectbox("Curve style",
-                                 ["haystack", "straight", "straight-triangle", "bezier",
-                                  "unbundled-bezier", "segments", "round-segments",
-                                  "taxi", "round-taxi"])
+    style = st.sidebar.selectbox(
+        "Curve style",
+        [
+            "haystack",
+            "straight",
+            "straight-triangle",
+            "bezier",
+            "unbundled-bezier",
+            "segments",
+            "round-segments",
+            "taxi",
+            "round-taxi",
+        ],
+    )
     edge_styles = [
-        EdgeStyle("REPORT LABELS", caption='description', directed=True, labeled=None),
-        EdgeStyle("PROVIDE REENCODED RECORDS", caption='label', directed=True,
-                  curve_style=style, labeled=None),
-        EdgeStyle("RECLASSIFY", caption='description', directed=True,
-                  color='red',
-                  curve_style='straight', labeled=None),
-        EdgeStyle("UPDATE_MODEL", caption='description', directed=True,
-                  color='blue',
-                  curve_style=style, labeled=None),
+        EdgeStyle("REPORT LABELS", caption="description", directed=True, labeled=None),
+        EdgeStyle(
+            "PROVIDE REENCODED RECORDS",
+            caption="label",
+            directed=True,
+            curve_style=style,
+            labeled=None,
+        ),
+        EdgeStyle(
+            "RECLASSIFY",
+            caption="description",
+            directed=True,
+            color="red",
+            curve_style="straight",
+            labeled=None,
+        ),
+        EdgeStyle(
+            "UPDATE_MODEL",
+            caption="description",
+            directed=True,
+            color="blue",
+            curve_style=style,
+            labeled=None,
+        ),
     ]
 
     layout = {
@@ -299,23 +399,11 @@ def get_protocol_step_graph(protocol: MultiLayerProtocol):
         "directed": True,
         "spacingFactor": 2.5,
         "positions": {
-            "1": {
-                "x": 100,
-                "y": 50
-            },
-            "2": {
-                "x": 50,
-                "y": 100
-            },
-            "3": {
-                "x": 100,
-                "y": 100
-            },
-            "4": {
-                "x": 150,
-                "y": 100
-            },
-        }
+            "1": {"x": 100, "y": 50},
+            "2": {"x": 50, "y": 100},
+            "3": {"x": 100, "y": 100},
+            "4": {"x": 150, "y": 100},
+        },
     }
 
     def my_call_back() -> None:
@@ -325,13 +413,19 @@ def get_protocol_step_graph(protocol: MultiLayerProtocol):
         # if val["action"] == "clicked_node":
         #     sts["selected_node"] = val["data"]["target_id"]
 
-    events = [
-        Event("clicked_node", "click tap", "node"),
-        Event("another_name", "dblclick dbltap", "*"),
-    ]
+    # events = [
+    #     Event("clicked_node", "click tap", "node"),
+    #     Event("another_name", "dblclick dbltap", "*"),
+    # ]
     # Render the component
-    out = st_link_analysis(elements, layout, node_styles, edge_styles,
-                           on_change=my_call_back, key="protocol-graph")
+    out = st_link_analysis(
+        elements,
+        layout,
+        node_styles,
+        edge_styles,
+        on_change=my_call_back,
+        key="protocol-graph",
+    )
     st.json(out)
     # st.json(sts["last_graph_action"])
     # st.text(f"Selected node:{sts['selected_node']}")

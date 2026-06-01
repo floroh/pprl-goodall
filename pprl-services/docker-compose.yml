@@ -1,0 +1,78 @@
+services:
+
+  mongo:
+    image: mongo:8.0
+    container_name: pprl-services-mongo-goodall
+    restart: always
+    ports:
+      - "127.0.0.1:27020:27017"
+    volumes:
+      - pprl-services-mongo-data:/data/db
+#      - ../data/results/dumps:/data/dumps
+      - ./dumps:/data/dumps
+      - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Init service-specific collections and users
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - pprl-services-net
+
+  pprl-do:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-do-service:${DOCKER_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8181:8081"
+    volumes:
+      - ./configs/do:/opt/pprl-services/do/configs
+      - ./logs/lu:/pprl-lu-service/logs
+    environment:
+      - SPRING_DATA_MONGODB_HOST=pprl-services-mongo-goodall
+    networks:
+      - pprl-services-net
+
+  pprl-lu:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-lu-service:${DOCKER_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8182:8082"
+    volumes:
+      - ./configs/lu:/opt/pprl-services/lu/configs
+      - ./logs/lu:/pprl-lu-service/logs
+    environment:
+      - SPRING_DATA_MONGODB_HOST=pprl-services-mongo-goodall
+    networks:
+      - pprl-services-net
+
+  pprl-pm:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-pm-service:${DOCKER_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8185:8085"
+    volumes:
+      - ./logs/pm:/pprl-pm-service/logs
+      - ../data/datasets:/opt/pprl-services/data/datasets
+      - ../data/csv-datasets:/opt/pprl-services/data/csv-datasets
+      - ../data/tmp:/opt/pprl-services/data/tmp
+    environment:
+      - SPRING_DATA_MONGODB_HOST=pprl-services-mongo-goodall
+    networks:
+      - pprl-services-net
+
+  pprl-dg:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-dg-service:${DOCKER_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8186:8086"
+    volumes:
+      - ./logs/dg:/pprl-dg-service/logs
+    environment:
+      - SPRING_DATA_MONGODB_HOST=pprl-services-mongo-goodall
+    networks:
+      - pprl-services-net
+
+networks:
+  pprl-services-net:
+    external: true
+
+volumes:
+  pprl-services-mongo-data:

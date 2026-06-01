@@ -88,7 +88,9 @@ class TestMatchResultAnalysisRequestDto(unittest.TestCase):
                                     attribute = '', 
                                     tag = '', 
                                     string_value = '', 
-                                    numeric_value = 1.337, )
+                                    numeric_value = 1.337, 
+                                    type = '', 
+                                    origin = '', )
                                 ], )
                         ], )
             )

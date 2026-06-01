@@ -6,8 +6,8 @@ Description of a matching scheme
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | [**MatcherIdDto**](MatcherIdDto.md) |  | [optional] 
-**validation** | [**RecordRequirementsDto**](RecordRequirementsDto.md) |  | [optional] 
+**id** | [**MatcherIdDto**](MatcherIdDto.md) | Name of this matching scheme | [optional] 
+**validation** | [**RecordRequirementsDto**](RecordRequirementsDto.md) | Description of requirements for this scheme | [optional] 
 **config** | **str** | Configuration / parameters to build the matcher | [optional] 
 **classifier_description** | **str** | Description of the classifier | [optional] 
 

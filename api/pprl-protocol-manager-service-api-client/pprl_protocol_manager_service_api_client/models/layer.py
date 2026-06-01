@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, Stri
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Layer(BaseModel):
     """
@@ -32,16 +33,31 @@ class Layer(BaseModel):
     max_batches: Optional[StrictInt] = Field(default=None, alias="maxBatches")
     encoding_method: Optional[StrictStr] = Field(default=None, alias="encodingMethod")
     update_matcher: Optional[StrictBool] = Field(default=None, alias="updateMatcher")
+    link_selection_strategy: Optional[StrictStr] = Field(default=None, alias="linkSelectionStrategy")
     update_type: Optional[StrictStr] = Field(default=None, alias="updateType")
     initial_threshold: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="initialThreshold")
+    stop_update_when_clerical_review_budget_is_reached: Optional[StrictBool] = Field(default=None, alias="stopUpdateWhenClericalReviewBudgetIsReached")
     budget: Optional[StrictInt] = None
     error_rate: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="errorRate")
+    attribute_weight_method: Optional[StrictStr] = Field(default=None, alias="attributeWeightMethod")
+    initial_attribute_weights: Optional[Dict[str, Union[StrictFloat, StrictInt]]] = Field(default=None, alias="initialAttributeWeights")
+    attribute_error_rates: Optional[Dict[str, Union[StrictFloat, StrictInt]]] = Field(default=None, alias="attributeErrorRates")
     project_id: Optional[StrictStr] = Field(default=None, alias="projectId")
     batch_size: Optional[StrictInt] = Field(default=None, alias="batchSize")
     current_batch: Optional[StrictInt] = Field(default=None, alias="currentBatch")
     number_of_reviews: Optional[StrictInt] = Field(default=None, alias="numberOfReviews")
     active: Optional[StrictBool] = None
-    __properties: ClassVar[List[str]] = ["name", "matcherMethod", "batchSizeConfig", "maxBatches", "encodingMethod", "updateMatcher", "updateType", "initialThreshold", "budget", "errorRate", "projectId", "batchSize", "currentBatch", "numberOfReviews", "active"]
+    __properties: ClassVar[List[str]] = ["name", "matcherMethod", "batchSizeConfig", "maxBatches", "encodingMethod", "updateMatcher", "linkSelectionStrategy", "updateType", "initialThreshold", "stopUpdateWhenClericalReviewBudgetIsReached", "budget", "errorRate", "attributeWeightMethod", "initialAttributeWeights", "attributeErrorRates", "projectId", "batchSize", "currentBatch", "numberOfReviews", "active"]
+
+    @field_validator('link_selection_strategy')
+    def link_selection_strategy_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set(['SORTED', 'ALTERNATING', 'BUCKETS', 'EXTERNAL_SERVICE']):
+            raise ValueError("must be one of enum values ('SORTED', 'ALTERNATING', 'BUCKETS', 'EXTERNAL_SERVICE')")
+        return value
 
     @field_validator('update_type')
     def update_type_validate_enum(cls, value):
@@ -54,7 +70,8 @@ class Layer(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -66,8 +83,7 @@ class Layer(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -110,10 +126,15 @@ class Layer(BaseModel):
             "maxBatches": obj.get("maxBatches"),
             "encodingMethod": obj.get("encodingMethod"),
             "updateMatcher": obj.get("updateMatcher"),
+            "linkSelectionStrategy": obj.get("linkSelectionStrategy"),
             "updateType": obj.get("updateType"),
             "initialThreshold": obj.get("initialThreshold"),
+            "stopUpdateWhenClericalReviewBudgetIsReached": obj.get("stopUpdateWhenClericalReviewBudgetIsReached"),
             "budget": obj.get("budget"),
             "errorRate": obj.get("errorRate"),
+            "attributeWeightMethod": obj.get("attributeWeightMethod"),
+            "initialAttributeWeights": obj.get("initialAttributeWeights"),
+            "attributeErrorRates": obj.get("attributeErrorRates"),
             "projectId": obj.get("projectId"),
             "batchSize": obj.get("batchSize"),
             "currentBatch": obj.get("currentBatch"),

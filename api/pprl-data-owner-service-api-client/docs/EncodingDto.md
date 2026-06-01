@@ -6,8 +6,8 @@ Description of an encoding scheme
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | [**EncodingIdDto**](EncodingIdDto.md) |  | [optional] 
-**validation** | [**RecordRequirementsDto**](RecordRequirementsDto.md) |  | [optional] 
+**id** | [**EncodingIdDto**](EncodingIdDto.md) | ID of this encoding scheme | [optional] 
+**validation** | [**RecordRequirementsDto**](RecordRequirementsDto.md) | Description of requirements for this scheme | [optional] 
 **config** | **str** | Configuration / parameters to build the encoder | [optional] 
 
 ## Example

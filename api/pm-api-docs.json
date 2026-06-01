@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.1",
+    "openapi": "3.1.0",
     "info": {
         "title": "PPRL Protocol Manager Service API",
         "description": "Protocol manager service for privacy-preserving record linkage",
@@ -11,7 +11,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8085",
+            "url": "http://localhost:8185",
             "description": "Generated server url"
         }
     ],
@@ -19,6 +19,22 @@
         {
             "name": "PPRL protocol manager",
             "description": "Manage communication between PPRL services"
+        },
+        {
+            "name": "Protocol analyzer",
+            "description": "Analysis utilities for linkage protocols"
+        },
+        {
+            "name": "Service connections",
+            "description": "Test connectivity to other services."
+        },
+        {
+            "name": "Actuator",
+            "description": "Monitor and interact",
+            "externalDocs": {
+                "description": "Spring Boot Actuator Web API Documentation",
+                "url": "https://docs.spring.io/spring-boot/docs/current/actuator-api/html/"
+            }
         },
         {
             "name": "Data Owner Preparation",
@@ -110,7 +126,7 @@
                             "application/json": {
                                 "schema": {
                                     "type": "integer",
-                                    "format": "int32"
+                                    "format": "int64"
                                 }
                             }
                         }
@@ -204,7 +220,104 @@
                             "application/json": {
                                 "schema": {
                                     "type": "integer",
-                                    "format": "int32"
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/data-owner/record/generate": {
+            "post": {
+                "tags": [
+                    "Data Owner Preparation"
+                ],
+                "summary": "Insert dataset from generator",
+                "operationId": "addGeneratedDataset",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DatasetGeneratorDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analyzer/tag-table": {
+            "post": {
+                "tags": [
+                    "Protocol analyzer"
+                ],
+                "summary": "Get all tags for an executed protocol in table format",
+                "operationId": "getTagsFromProtocolAsTable",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProtocolAnalysisRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SerializableTable"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analyzer/tag-collection": {
+            "post": {
+                "tags": [
+                    "Protocol analyzer"
+                ],
+                "summary": "Get all tags for an executed protocol",
+                "operationId": "getTagsFromProtocol",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProtocolAnalysisRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
                                 }
                             }
                         }
@@ -320,6 +433,251 @@
                 }
             }
         },
+        "/connectivity/test": {
+            "get": {
+                "tags": [
+                    "Service connections"
+                ],
+                "summary": "Test connections",
+                "operationId": "testConnections",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator root web endpoint",
+                "operationId": "links",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics'",
+                "operationId": "listNames",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics/{requiredMetricName}": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics-requiredMetricName'",
+                "operationId": "metric",
+                "parameters": [
+                    {
+                        "name": "requiredMetricName",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tag",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/actuator/mappings": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'mappings'",
+                "operationId": "mappings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/info": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'info'",
+                "operationId": "info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/health": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'health'",
+                "operationId": "health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/protocol/multi-layer/all": {
             "delete": {
                 "tags": [
@@ -363,6 +721,15 @@
                     "updateMatcher": {
                         "type": "boolean"
                     },
+                    "linkSelectionStrategy": {
+                        "type": "string",
+                        "enum": [
+                            "SORTED",
+                            "ALTERNATING",
+                            "BUCKETS",
+                            "EXTERNAL_SERVICE"
+                        ]
+                    },
                     "updateType": {
                         "type": "string",
                         "enum": [
@@ -376,6 +743,9 @@
                         "type": "number",
                         "format": "double"
                     },
+                    "stopUpdateWhenClericalReviewBudgetIsReached": {
+                        "type": "boolean"
+                    },
                     "budget": {
                         "type": "integer",
                         "format": "int32"
@@ -383,6 +753,23 @@
                     "errorRate": {
                         "type": "number",
                         "format": "double"
+                    },
+                    "attributeWeightMethod": {
+                        "type": "string"
+                    },
+                    "initialAttributeWeights": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "attributeErrorRates": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
                     },
                     "projectId": {
                         "type": "string"
@@ -416,13 +803,16 @@
                             "$ref": "#/components/schemas/Layer"
                         }
                     },
+                    "linkageProject": {
+                        "type": "string"
+                    },
                     "plaintextDatasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "initialDatasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "lastUpdate": {
                         "type": "string"
@@ -544,22 +934,28 @@
                 }
             },
             "EncodedTransferRequestDto": {
-                "required": [
-                    "encoding"
-                ],
                 "type": "object",
                 "properties": {
                     "dataOwnerDatasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
+                    },
+                    "linkageUnitDatasetId": {
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "encoding": {
                         "$ref": "#/components/schemas/EncodingIdDto"
                     }
-                }
+                },
+                "required": [
+                    "dataOwnerDatasetId",
+                    "encoding"
+                ]
             },
             "EncodingIdDto": {
                 "type": "object",
+                "description": "ID of an encoding scheme",
                 "properties": {
                     "method": {
                         "type": "string",
@@ -569,8 +965,7 @@
                         "type": "string",
                         "description": "Unique name of the record-linkage project"
                     }
-                },
-                "description": "ID of an encoding scheme"
+                }
             },
             "ProtocolExecutionDto": {
                 "type": "object",
@@ -591,11 +986,276 @@
                 "type": "object",
                 "properties": {
                     "path": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1
                     },
+                    "datasetDto": {
+                        "$ref": "#/components/schemas/DatasetDto"
+                    }
+                },
+                "required": [
+                    "path"
+                ]
+            },
+            "DatasetDto": {
+                "type": "object",
+                "properties": {
                     "datasetId": {
                         "type": "integer",
+                        "format": "int64"
+                    },
+                    "datasetName": {
+                        "type": "string"
+                    },
+                    "plaintextDatasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "encodingIdDto": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ChangeFilter": {
+                "type": "object",
+                "properties": {
+                    "minChanges": {
+                        "type": "integer",
                         "format": "int32"
+                    },
+                    "maxChanges": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "changedAttributes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "unchangedAttributes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "requireAllListedAttributes": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ContentFilter": {
+                "type": "object",
+                "properties": {
+                    "recordSelectorString": {
+                        "type": "string"
+                    },
+                    "bothRecordMatch": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "DatasetGeneratorDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "datasetName": {
+                        "type": "string"
+                    },
+                    "germanyGeneratorConfig": {
+                        "$ref": "#/components/schemas/GermanyGeneratorConfig"
+                    },
+                    "usvrSelectionConfig": {
+                        "$ref": "#/components/schemas/UsvrSelectionConfig"
+                    }
+                }
+            },
+            "GermanyGeneratorConfig": {
+                "type": "object",
+                "properties": {
+                    "seed": {
+                        "type": "string"
+                    },
+                    "numberOfRecords": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "includeHouseholdStructures": {
+                        "type": "boolean"
+                    },
+                    "includeHeader": {
+                        "type": "boolean"
+                    },
+                    "destinationFolder": {
+                        "type": "string"
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "sourceName": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TimeFilter": {
+                "type": "object",
+                "properties": {
+                    "ignoreOrder": {
+                        "type": "boolean"
+                    },
+                    "requireAllTimestampsPassing": {
+                        "type": "boolean"
+                    },
+                    "minDays": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "maxDays": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "UsvrSelectionConfig": {
+                "type": "object",
+                "properties": {
+                    "datasetVariantSuffix": {
+                        "type": "string"
+                    },
+                    "clusterType": {
+                        "type": "string",
+                        "enum": [
+                            "nc"
+                        ]
+                    },
+                    "numRecordsA": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "numRecordsB": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "numDuplicates": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "numClusters": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "snapshotDateA": {
+                        "type": "string"
+                    },
+                    "snapshotDateB": {
+                        "type": "string"
+                    },
+                    "sourceA": {
+                        "type": "string"
+                    },
+                    "sourceB": {
+                        "type": "string"
+                    },
+                    "attributeColumns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "orderingStrategy": {
+                        "type": "string",
+                        "enum": [
+                            "SEEDED_SHUFFLE",
+                            "DB_ORDER"
+                        ]
+                    },
+                    "orderingSeed": {
+                        "type": "string"
+                    },
+                    "fixYobJitter": {
+                        "type": "boolean"
+                    },
+                    "changeFilter": {
+                        "$ref": "#/components/schemas/ChangeFilter"
+                    },
+                    "timeFilter": {
+                        "$ref": "#/components/schemas/TimeFilter"
+                    },
+                    "contentFilter": {
+                        "$ref": "#/components/schemas/ContentFilter"
+                    }
+                }
+            },
+            "ProtocolAnalysisRequestDto": {
+                "type": "object",
+                "properties": {
+                    "protocolId": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Tag": {
+                "type": "object",
+                "properties": {
+                    "id0": {
+                        "type": "string"
+                    },
+                    "id1": {
+                        "type": "string"
+                    },
+                    "attribute": {
+                        "type": "string"
+                    },
+                    "tag": {
+                        "type": "string"
+                    },
+                    "stringValue": {
+                        "type": "string"
+                    },
+                    "numericValue": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "origin": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Link": {
+                "type": "object",
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "templated": {
+                        "type": "boolean"
                     }
                 }
             }

@@ -6,8 +6,10 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **dataset_id** | **int** |  | [optional] 
-**plaintext_dataset_id** | **int** |  | [optional] 
 **dataset_name** | **str** |  | [optional] 
+**plaintext_dataset_id** | **int** |  | [optional] 
+**encoding_id_dto** | [**EncodingIdDto**](EncodingIdDto.md) |  | [optional] 
+**properties** | **Dict[str, str]** |  | [optional] 
 
 ## Example
 

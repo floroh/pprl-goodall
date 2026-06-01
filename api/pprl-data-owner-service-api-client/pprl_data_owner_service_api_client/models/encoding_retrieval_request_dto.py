@@ -22,18 +22,25 @@ from typing import Any, ClassVar, Dict, List, Optional
 from pprl_data_owner_service_api_client.models.encoding_id_dto import EncodingIdDto
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class EncodingRetrievalRequestDto(BaseModel):
     """
     Request description for encoding a single record. The record itself is not part of the request, but retrieved from the database using its id.
     """ # noqa: E501
     encoding_id: EncodingIdDto = Field(alias="encodingId")
+    id_unique: Optional[Dict[str, Any]] = Field(default=None, alias="id.unique")
+    id_source: Optional[Dict[str, Any]] = Field(default=None, alias="id.source")
+    id_local: Optional[Dict[str, Any]] = Field(default=None, alias="id.local")
+    id_global: Optional[Dict[str, Any]] = Field(default=None, alias="id.global")
+    id_blocks: Optional[Dict[str, Any]] = Field(default=None, alias="id.blocks")
     dataset_id: Optional[StrictInt] = Field(default=None, alias="datasetId")
     record_secret: Optional[StrictStr] = Field(default=None, alias="recordSecret")
-    __properties: ClassVar[List[str]] = ["encodingId", "datasetId", "recordSecret"]
+    __properties: ClassVar[List[str]] = ["encodingId", "id.unique", "id.source", "id.local", "id.global", "id.blocks", "datasetId", "recordSecret"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -45,8 +52,7 @@ class EncodingRetrievalRequestDto(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -87,6 +93,11 @@ class EncodingRetrievalRequestDto(BaseModel):
 
         _obj = cls.model_validate({
             "encodingId": EncodingIdDto.from_dict(obj["encodingId"]) if obj.get("encodingId") is not None else None,
+            "id.unique": obj.get("id.unique"),
+            "id.source": obj.get("id.source"),
+            "id.local": obj.get("id.local"),
+            "id.global": obj.get("id.global"),
+            "id.blocks": obj.get("id.blocks"),
             "datasetId": obj.get("datasetId"),
             "recordSecret": obj.get("recordSecret")
         })

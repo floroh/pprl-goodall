@@ -17,12 +17,13 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from pprl_data_owner_service_api_client.models.encoding_id_dto import EncodingIdDto
 from pprl_data_owner_service_api_client.models.record_id_dto import RecordIdDto
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class MultiRecordEncodingRetrievalRequestDto(BaseModel):
     """
@@ -31,10 +32,12 @@ class MultiRecordEncodingRetrievalRequestDto(BaseModel):
     encoding_id: Optional[EncodingIdDto] = Field(default=None, alias="encodingId")
     record_ids: Optional[List[RecordIdDto]] = Field(default=None, description="List of record ids to encode. If empty, all records of the dataset are encoded.", alias="recordIds")
     dataset_id: Optional[StrictInt] = Field(default=None, alias="datasetId")
-    __properties: ClassVar[List[str]] = ["encodingId", "recordIds", "datasetId"]
+    dataset_source: Optional[StrictStr] = Field(default=None, alias="datasetSource")
+    __properties: ClassVar[List[str]] = ["encodingId", "recordIds", "datasetId", "datasetSource"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -46,8 +49,7 @@ class MultiRecordEncodingRetrievalRequestDto(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -96,7 +98,8 @@ class MultiRecordEncodingRetrievalRequestDto(BaseModel):
         _obj = cls.model_validate({
             "encodingId": EncodingIdDto.from_dict(obj["encodingId"]) if obj.get("encodingId") is not None else None,
             "recordIds": [RecordIdDto.from_dict(_item) for _item in obj["recordIds"]] if obj.get("recordIds") is not None else None,
-            "datasetId": obj.get("datasetId")
+            "datasetId": obj.get("datasetId"),
+            "datasetSource": obj.get("datasetSource")
         })
         return _obj
 

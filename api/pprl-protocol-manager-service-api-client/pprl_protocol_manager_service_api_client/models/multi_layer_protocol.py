@@ -23,6 +23,7 @@ from pprl_protocol_manager_service_api_client.models.layer import Layer
 from pprl_protocol_manager_service_api_client.models.processing_step import ProcessingStep
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class MultiLayerProtocol(BaseModel):
     """
@@ -30,15 +31,17 @@ class MultiLayerProtocol(BaseModel):
     """ # noqa: E501
     protocol_id: Optional[StrictStr] = Field(default=None, alias="protocolId")
     layers: Optional[List[Layer]] = None
+    linkage_project: Optional[StrictStr] = Field(default=None, alias="linkageProject")
     plaintext_dataset_id: Optional[StrictInt] = Field(default=None, alias="plaintextDatasetId")
     initial_dataset_id: Optional[StrictInt] = Field(default=None, alias="initialDatasetId")
     last_update: Optional[StrictStr] = Field(default=None, alias="lastUpdate")
     step_history: Optional[List[ProcessingStep]] = Field(default=None, alias="stepHistory")
     step_queue: Optional[List[ProcessingStep]] = Field(default=None, alias="stepQueue")
-    __properties: ClassVar[List[str]] = ["protocolId", "layers", "plaintextDatasetId", "initialDatasetId", "lastUpdate", "stepHistory", "stepQueue"]
+    __properties: ClassVar[List[str]] = ["protocolId", "layers", "linkageProject", "plaintextDatasetId", "initialDatasetId", "lastUpdate", "stepHistory", "stepQueue"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -50,8 +53,7 @@ class MultiLayerProtocol(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -111,6 +113,7 @@ class MultiLayerProtocol(BaseModel):
         _obj = cls.model_validate({
             "protocolId": obj.get("protocolId"),
             "layers": [Layer.from_dict(_item) for _item in obj["layers"]] if obj.get("layers") is not None else None,
+            "linkageProject": obj.get("linkageProject"),
             "plaintextDatasetId": obj.get("plaintextDatasetId"),
             "initialDatasetId": obj.get("initialDatasetId"),
             "lastUpdate": obj.get("lastUpdate"),

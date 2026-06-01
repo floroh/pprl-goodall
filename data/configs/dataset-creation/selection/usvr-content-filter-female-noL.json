@@ -1,0 +1,41 @@
+{
+  "usvrSelectionConfig": {
+    "clusterType": "nc",
+    "numRecordsA": 1000,
+    "numRecordsB": 1000,
+    "numDuplicates": 200,
+    "attributeColumns": [
+      "FIRSTNAME",
+      "MIDDLENAME",
+      "LASTNAME",
+      "YEAROFBIRTH",
+      "CITY",
+      "PLZ",
+      "STATE",
+      "PLACEOFBIRTH",
+      "STREET_NAME",
+      "STREET_NUMBER",
+      "SEX",
+      "PARTY",
+      "PHONE_NUMBER"
+    ],
+    "orderingStrategy": "SEEDED_SHUFFLE",
+    "orderingSeed": "abcd",
+    "fixYobJitter": true,
+    "changeFilter": {
+      "minChanges": 1,
+      "changedAttributes": [
+        "FIRSTNAME",
+        "MIDDLENAME",
+        "LASTNAME",
+        "PLACEOFBIRTH",
+        "SEX"
+      ]
+    },
+    "contentFilter": {
+      "recordSelectorString": "{\n  \"@class\" : \".SelectorCombination\",\n  \"operation\" : \"AND\",\n  \"selectors\" : [ {\n    \"@class\" : \".AttributeIsIn\",\n    \"attributeName\" : \"SEX\",\n    \"lookupCollection\" : [ \"FEMALE\" ],\n    \"useUpperCase\" : true\n  } ]\n}",
+      "bothRecordMatch": true
+    },
+    "datasetVariantSuffix": "female-noL"
+  }
+}

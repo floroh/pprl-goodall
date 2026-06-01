@@ -1,0 +1,30 @@
+[
+  {
+    "name": "datasets-usvr-change",
+    "dataset_creation_config": {
+      "config_path": "../dataset-creation/selection-change-only.json",
+      "variations": [
+        {
+          "type": "selection:usvr_selection_config.ordering_seed",
+          "replacements":  ["abcd", "efgh"]
+        },
+        {
+          "type": "selection:size",
+          "replacements": [50000, 10000, 1000]
+        },
+        {
+          "type": "selection:overlap",
+          "replacements": [0.5, 0.3, 0.1]
+        },
+        {
+          "type": "selection:change.min",
+          "replacements": [1, 2]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR"
+      }
+    }
+  }
+]

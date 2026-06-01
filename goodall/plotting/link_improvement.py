@@ -1,54 +1,35 @@
-from plotly.subplots import make_subplots
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from matplotlib.colors import to_rgba_array, to_rgb
+from matplotlib.colors import to_rgb
 
-def plotly_dual_axis(fig1, fig2, title="", y1="", y2=""):
-    # Create subplot with secondary axis
-    subplot_fig = make_subplots(specs=[[{"secondary_y": True}]])
-
-    # Put Dataframe in fig1 and fig2
-    # fig1 = px.line(data1)
-    # fig2 = px.line(data2)
-    # Change the axis for fig2
-    fig2.update_traces(yaxis="y2")
-
-    # Add the figs to the subplot figure
-    # subplot_fig.add_traces(fig1.data + fig2.data)
-    subplot_fig.add_traces(fig1.data)
-    subplot_fig.add_traces(fig2.data)
-
-    # FORMAT subplot figure
-    subplot_fig.update_layout(
-        yaxis=dict(title=y1, range=[0.91, 0.96]), yaxis2=dict(title=y2, range=[0, 800])
-    )
-    subplot_fig.update_layout(xaxis=dict(title="Updated uncertain pairs in layer n=0"))
-
-    # RECOLOR so as not to have overlapping colors
-    # subplot_fig.for_each_trace(lambda t: t.update(line=dict(color=t.marker.color)))
-    return subplot_fig
+def to_py_numeric_list(series):
+    return [int(v) if isinstance(v, np.integer)
+            else float(v) if isinstance(v, np.floating)
+            else v for v in series]
 
 
 def plot_quality_history(
-        df_report: pd.DataFrame,
-        initial_score: float,
-        optimal_initial_score: float,
-        x_column: str = "#Improved",
-        name_color: str = None,
-        name_symbol: str = None
+    df_report: pd.DataFrame,
+    initial_score: float = None,
+    optimal_initial_score: float = None,
+    x_column: str = "#Improved",
+    name_color: str = None,
+    name_symbol: str = None,
+    reverse_colors: bool = False,
+    skip_first_color: bool = False,
+    x_vline: int = -1
 ):
-    x_vline = 5
-    if x_column == "#Improved":
-        x_vline = 500
-        # x_column = "#Reviewed pairs in top layer"
+    if x_vline < 0:
+        x_vline = 5
+        if x_column == "#Improved":
+            x_vline = 500
 
+    # Remove special results (ideal initial threshold)
     df = df_report[df_report["#Improved"] >= 0]
 
-    # colors = px.colors.qualitative.D3
     colors = px.colors.qualitative.Set1
-    # colors = px.colors.qualitative.Dark24
-    # colors = px.colors.sequential.Viridis
     markers = ["circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down", "triangle-left"]
     group_by_columns = []
     if name_color is not None and name_symbol is not None:
@@ -61,21 +42,24 @@ def plot_quality_history(
         n_colors = len(groups)
     if (name_color is not None and "Thr" in name_color) or n_colors > len(colors):
         colors = px.colors.sample_colorscale("Plasma",
-                                         [n / (n_colors - 1) for n in range(n_colors)], colortype='tuple')
-    if "F1-score-min" in df.columns and name_color is not None:
+                                         [n / max((n_colors - 1), 1) for n in range(n_colors)], colortype='tuple')
+    # if "F1-score-min" in df.columns and name_color is not None:
+    if name_color is not None:
         traces = []
-        # colors = (colors[1], colors[2], colors[3])  # For XOR
-        colors = colors[:n_colors]
+        if skip_first_color:
+            colors = colors[1:n_colors+1]  # For XOR
+        else:
+            colors = colors[:n_colors]
         markers = markers[:n_colors]
-        # colors.reverse()
-        # markers.reverse()
+        if reverse_colors:
+            colors.reverse()
+            markers.reverse()
         for i, group in enumerate(groups):
             k = group[0]
+            # k = k[::-1]  # Reverse tuple values for display in the legend
             d = group[1]
-            x = d[x_column].tolist()
-            y = d["F1-score"].tolist()
-            y_upper = d["F1-score-max"].tolist()
-            y_lower = d["F1-score-min"].tolist()
+            x = to_py_numeric_list(d[x_column])
+            y = to_py_numeric_list(d["F1-score"])
             fillcolor = colors[i]
             if isinstance(fillcolor, str) and fillcolor.startswith('#'):
                 fillcolor = to_rgb(fillcolor)
@@ -89,18 +73,21 @@ def plot_quality_history(
                                      line=dict(color=fillcolor),
                                      ))
             # fillcolor = str(to_rgb(colors[i])).replace(')', ', 0.3)')
-            fillcolor = fillcolor.replace(')', ', 0.3)')
-            fillcolor = fillcolor.replace('rgb', 'rgba')
-            traces.insert(0, go.Scatter(x=x + x[::-1], y=y_upper + y_lower[::-1],
-                                        fill='toself',
-                                        # fillcolor='rgba(0.0,0.0,1.0,0.5)',
-                                        fillcolor=fillcolor,
-                                        # fillcolor=fillcolor,
-                                        line=dict(color='rgba(255,255,255,0)'),
-                                        hoverinfo="skip",
-                                        showlegend=False))
+            if "F1-score-min" in df.columns:
+                y_upper = to_py_numeric_list(d["F1-score-max"])
+                y_lower = to_py_numeric_list(d["F1-score-min"])
+                fillcolor = fillcolor.replace(')', ', 0.3)')
+                fillcolor = fillcolor.replace('rgb', 'rgba')
+                traces.insert(0, go.Scatter(x=x + x[::-1], y=y_upper + y_lower[::-1],
+                                            fill='toself',
+                                            # fillcolor='rgba(0.0,0.0,1.0,0.5)',
+                                            fillcolor=fillcolor,
+                                            # fillcolor=fillcolor,
+                                            line=dict(color='rgba(255,255,255,0)'),
+                                            hoverinfo="skip",
+                                            showlegend=False))
         quality_history = go.Figure(traces)
-        quality_history.update_layout()
+        # quality_history.update_layout()
     else:
         if name_color is not None and name_symbol is not None:
             quality_history = px.line(
@@ -120,17 +107,25 @@ def plot_quality_history(
                 df, x=x_column, y=["recall", "precision", "F1-score"], markers=True
             )
 
-    # quality_history.add_hline(
-    #     y=optimal_initial_score, line=dict(color="Green", width=2, dash="dot")
-    # )
-    # quality_history.add_hline(y=initial_score, line=dict(color="Gray", width=2, dash="dot"))
-    # quality_history.add_vline(x=x_vline, line=dict(color="Gray", width=2, dash="dot"))
-
+    quality_history.add_vline(x=x_vline, line=dict(color="Gray", width=2, dash="dot"))
+    if initial_score:
+        quality_history.add_hline(
+            y=initial_score,
+            line=dict(color="Grey", width=2, dash="dash"),
+            annotation_text="Initial score",
+            annotation_position="top left",
+            annotation_font_size=12,
+        )
+    if optimal_initial_score:
+        quality_history.add_hline(
+            y=optimal_initial_score,
+            line=dict(color="Green", width=2, dash="dash"),
+            annotation_text="Optimal initial score",
+            annotation_position="top left",
+            annotation_font_size=12,
+        )
     quality_history.update_layout(
         xaxis=dict(tickmode='array', tickvals=df[x_column].tolist(),
                    ticktext=df["#Improved"].tolist())
     )
-    # fig_ppcr_counts = px.bar(df, xCol, "#PPCR")
-    # dual = plotly_dual_axis(quality_history, fig_ppcr_counts, title="Quality history", y1="F1-score", y2="PPCR Counts")
-    # return dual
     return quality_history

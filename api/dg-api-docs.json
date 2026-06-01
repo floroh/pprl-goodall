@@ -1,0 +1,924 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8186",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Data Generator",
+            "description": "API for generating synthetic data records"
+        },
+        {
+            "name": "Actuator",
+            "description": "Monitor and interact",
+            "externalDocs": {
+                "description": "Spring Boot Actuator Web API Documentation",
+                "url": "https://docs.spring.io/spring-boot/docs/current/actuator-api/html/"
+            }
+        },
+        {
+            "name": "Data Selector",
+            "description": "API for selecting records from an existing dataset of record clusters"
+        }
+    ],
+    "paths": {
+        "/selector/select": {
+            "post": {
+                "tags": [
+                    "Data Selector"
+                ],
+                "operationId": "select",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UsvrSelectionConfig"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaggedDatasetDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/selector/prepare/import-ncvr": {
+            "post": {
+                "tags": [
+                    "Data Selector"
+                ],
+                "summary": "Import NCVR data",
+                "description": "Import record clusters from North Carolina Voter Registry as provied by Panse et al. at EDBT",
+                "operationId": "prepareImportPanseNcvr",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NcvrPanseImportRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/selector/prepare/cluster-order": {
+            "post": {
+                "tags": [
+                    "Data Selector"
+                ],
+                "operationId": "createClusterOrder",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClusterOrderRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Data Selector"
+                ],
+                "operationId": "deleteClusterOrder",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClusterOrderRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/selector/clusters": {
+            "post": {
+                "tags": [
+                    "Data Selector"
+                ],
+                "operationId": "retrieveClusters",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UsvrSelectionConfig"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordCluster"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/generator/generate": {
+            "post": {
+                "tags": [
+                    "Data Generator"
+                ],
+                "summary": "Generate synthetic records",
+                "description": "Generates a list of synthetic records based on the provided configuration",
+                "operationId": "generate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GermanyGeneratorConfig"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaggedDatasetDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/selector/configs/example/{name}": {
+            "get": {
+                "tags": [
+                    "Data Selector"
+                ],
+                "operationId": "exampleUsvrSelectionConfig",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsvrSelectionConfig"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/generator/configs/example/{name}": {
+            "get": {
+                "tags": [
+                    "Data Generator"
+                ],
+                "summary": "Get example configuration",
+                "description": "Retrieves an example GermanyGeneratorConfiguration with specified parameters",
+                "operationId": "exampleGermanyGeneratorConfiguration",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Name of the example configuration (embed 'HH' to include households structures)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved example configuration",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GermanyGeneratorConfig"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator root web endpoint",
+                "operationId": "links",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics'",
+                "operationId": "listNames",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics/{requiredMetricName}": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics-requiredMetricName'",
+                "operationId": "metric",
+                "parameters": [
+                    {
+                        "name": "requiredMetricName",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tag",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/actuator/mappings": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'mappings'",
+                "operationId": "mappings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/info": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'info'",
+                "operationId": "info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/health": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'health'",
+                "operationId": "health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ChangeFilter": {
+                "type": "object",
+                "properties": {
+                    "minChanges": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "maxChanges": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "changedAttributes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "unchangedAttributes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "requireAllListedAttributes": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ContentFilter": {
+                "type": "object",
+                "properties": {
+                    "recordSelectorString": {
+                        "type": "string"
+                    },
+                    "bothRecordMatch": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "TimeFilter": {
+                "type": "object",
+                "properties": {
+                    "ignoreOrder": {
+                        "type": "boolean"
+                    },
+                    "requireAllTimestampsPassing": {
+                        "type": "boolean"
+                    },
+                    "minDays": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "maxDays": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "UsvrSelectionConfig": {
+                "type": "object",
+                "properties": {
+                    "datasetVariantSuffix": {
+                        "type": "string"
+                    },
+                    "clusterType": {
+                        "type": "string",
+                        "enum": [
+                            "nc"
+                        ]
+                    },
+                    "numRecordsA": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "numRecordsB": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "numDuplicates": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "numClusters": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "snapshotDateA": {
+                        "type": "string"
+                    },
+                    "snapshotDateB": {
+                        "type": "string"
+                    },
+                    "sourceA": {
+                        "type": "string"
+                    },
+                    "sourceB": {
+                        "type": "string"
+                    },
+                    "attributeColumns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "orderingStrategy": {
+                        "type": "string",
+                        "enum": [
+                            "SEEDED_SHUFFLE",
+                            "DB_ORDER"
+                        ]
+                    },
+                    "orderingSeed": {
+                        "type": "string"
+                    },
+                    "fixYobJitter": {
+                        "type": "boolean"
+                    },
+                    "changeFilter": {
+                        "$ref": "#/components/schemas/ChangeFilter"
+                    },
+                    "timeFilter": {
+                        "$ref": "#/components/schemas/TimeFilter"
+                    },
+                    "contentFilter": {
+                        "$ref": "#/components/schemas/ContentFilter"
+                    }
+                }
+            },
+            "AttributeDto": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EncodingIdDto": {
+                "type": "object",
+                "description": "ID of an encoding scheme",
+                "properties": {
+                    "method": {
+                        "type": "string",
+                        "description": "Name of the encoding scheme"
+                    },
+                    "project": {
+                        "type": "string",
+                        "description": "Unique name of the record-linkage project"
+                    }
+                }
+            },
+            "RecordDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "encodingId": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/AttributeDto"
+                        }
+                    }
+                }
+            },
+            "RecordIdDto": {
+                "type": "object",
+                "properties": {
+                    "unique": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "local": {
+                        "type": "string"
+                    },
+                    "global": {
+                        "type": "string"
+                    },
+                    "blocks": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Tag": {
+                "type": "object",
+                "properties": {
+                    "id0": {
+                        "type": "string"
+                    },
+                    "id1": {
+                        "type": "string"
+                    },
+                    "attribute": {
+                        "type": "string"
+                    },
+                    "tag": {
+                        "type": "string"
+                    },
+                    "stringValue": {
+                        "type": "string"
+                    },
+                    "numericValue": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "origin": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TaggedDatasetDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "records": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordDto"
+                        }
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    }
+                }
+            },
+            "NcvrPanseImportRequest": {
+                "type": "object",
+                "properties": {
+                    "maxClusters": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "forceImportEvenWhenNotEmpty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ClusterOrderRequest": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "nc"
+                        ]
+                    },
+                    "seed": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DateInfo": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string"
+                    },
+                    "year": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "month": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "day": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "asDate": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                }
+            },
+            "Duplicate": {
+                "type": "object",
+                "properties": {
+                    "record": {
+                        "$ref": "#/components/schemas/GenericRawRecord"
+                    },
+                    "occursIn": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DateInfo"
+                        },
+                        "uniqueItems": true
+                    },
+                    "changes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "boolean"
+                        }
+                    },
+                    "timespanInDays": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "uniqueItems": true
+                    }
+                }
+            },
+            "GenericRawRecord": {
+                "type": "object",
+                "properties": {
+                    "voterId": {
+                        "type": "string"
+                    },
+                    "snapShot": {
+                        "$ref": "#/components/schemas/DateInfo"
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "GenericRawRecordWithDates": {
+                "type": "object",
+                "properties": {
+                    "record": {
+                        "$ref": "#/components/schemas/GenericRawRecord"
+                    },
+                    "occursIn": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DateInfo"
+                        },
+                        "uniqueItems": true
+                    }
+                }
+            },
+            "ObjectId": {
+                "type": "object",
+                "properties": {
+                    "timestamp": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "RecordCluster": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "domainId": {
+                        "type": "string"
+                    },
+                    "origin": {
+                        "$ref": "#/components/schemas/GenericRawRecordWithDates"
+                    },
+                    "duplicates": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Duplicate"
+                        }
+                    }
+                }
+            },
+            "GermanyGeneratorConfig": {
+                "type": "object",
+                "properties": {
+                    "seed": {
+                        "type": "string"
+                    },
+                    "numberOfRecords": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "includeHouseholdStructures": {
+                        "type": "boolean"
+                    },
+                    "includeHeader": {
+                        "type": "boolean"
+                    },
+                    "destinationFolder": {
+                        "type": "string"
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "sourceName": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Link": {
+                "type": "object",
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "templated": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    }
+}

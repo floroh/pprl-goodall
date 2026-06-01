@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**path** | **str** |  | [optional] 
-**dataset_id** | **int** |  | [optional] 
+**path** | **str** |  | 
+**dataset_dto** | [**DatasetDto**](DatasetDto.md) |  | [optional] 
 
 ## Example
 

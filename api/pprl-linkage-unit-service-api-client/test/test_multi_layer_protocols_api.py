@@ -68,8 +68,8 @@ class TestMultiLayerProtocolsApi(unittest.TestCase):
         """
         pass
 
-    def test_update2(self) -> None:
-        """Test case for update2
+    def test_update3(self) -> None:
+        """Test case for update3
 
         Update a matcher based on improved links
         """

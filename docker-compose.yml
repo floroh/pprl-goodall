@@ -1,0 +1,29 @@
+networks:
+  public-net:  # Host network
+    driver: bridge
+  pprl-services-net:
+    external: true
+
+services:
+  pprl-goodall-ui:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-goodall-ui:${DOCKER_IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: dev/Dockerfile
+      target: pprl-goodall-ui
+    ports:
+      - "127.0.0.1:8501:8501"
+    networks:
+      - public-net
+      - pprl-services-net
+  pprl-goodall-cli:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-goodall-cli:${DOCKER_IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: dev/Dockerfile
+      target: pprl-goodall-cli
+    volumes:
+      - ./data/tmp:/opt/pprl-goodall/data/tmp
+    networks:
+      - public-net
+      - pprl-services-net

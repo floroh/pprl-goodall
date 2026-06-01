@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     PPRL Linkage Unit Service API
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -1645,7 +1644,7 @@ class MultiLayerProtocolsApi:
 
 
     @validate_call
-    def update2(
+    def update3(
         self,
         matcher_update_request: MatcherUpdateRequest,
         _request_timeout: Union[
@@ -1688,7 +1687,7 @@ class MultiLayerProtocolsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._update2_serialize(
+        _param = self._update3_serialize(
             matcher_update_request=matcher_update_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1711,7 +1710,7 @@ class MultiLayerProtocolsApi:
 
 
     @validate_call
-    def update2_with_http_info(
+    def update3_with_http_info(
         self,
         matcher_update_request: MatcherUpdateRequest,
         _request_timeout: Union[
@@ -1754,7 +1753,7 @@ class MultiLayerProtocolsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._update2_serialize(
+        _param = self._update3_serialize(
             matcher_update_request=matcher_update_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1777,7 +1776,7 @@ class MultiLayerProtocolsApi:
 
 
     @validate_call
-    def update2_without_preload_content(
+    def update3_without_preload_content(
         self,
         matcher_update_request: MatcherUpdateRequest,
         _request_timeout: Union[
@@ -1820,7 +1819,7 @@ class MultiLayerProtocolsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._update2_serialize(
+        _param = self._update3_serialize(
             matcher_update_request=matcher_update_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1838,7 +1837,7 @@ class MultiLayerProtocolsApi:
         return response_data.response
 
 
-    def _update2_serialize(
+    def _update3_serialize(
         self,
         matcher_update_request,
         _request_auth,

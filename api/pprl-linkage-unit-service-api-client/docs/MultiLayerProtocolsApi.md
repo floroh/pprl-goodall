@@ -1,6 +1,6 @@
 # pprl_linkage_unit_service_api_client.MultiLayerProtocolsApi
 
-All URIs are relative to *http://localhost:8082*
+All URIs are relative to *http://localhost:8182*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -10,7 +10,7 @@ Method | HTTP request | Description
 [**get_wishes**](MultiLayerProtocolsApi.md#get_wishes) | **GET** /protocol/wishlist/{projectId} | Get record encoding wishes
 [**reclassify**](MultiLayerProtocolsApi.md#reclassify) | **POST** /protocol/pairs/reclassify/{projectId} | Reclassify active links
 [**report_pairs**](MultiLayerProtocolsApi.md#report_pairs) | **POST** /protocol/pairs/report/{projectId} | Report links
-[**update2**](MultiLayerProtocolsApi.md#update2) | **POST** /protocol/matcher/update | Update a matcher based on improved links
+[**update3**](MultiLayerProtocolsApi.md#update3) | **POST** /protocol/matcher/update | Update a matcher based on improved links
 [**update_record_pairs**](MultiLayerProtocolsApi.md#update_record_pairs) | **PUT** /protocol/pairs | Update record pairs
 
 
@@ -28,10 +28,10 @@ from pprl_linkage_unit_service_api_client.models.record_pair_dto import RecordPa
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -94,10 +94,10 @@ from pprl_linkage_unit_service_api_client.models.record_pair_dto import RecordPa
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -161,10 +161,10 @@ import pprl_linkage_unit_service_api_client
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -225,10 +225,10 @@ from pprl_linkage_unit_service_api_client.models.record_encoding_wish_dto import
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -294,10 +294,10 @@ import pprl_linkage_unit_service_api_client
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -357,10 +357,10 @@ import pprl_linkage_unit_service_api_client
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -409,8 +409,8 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **update2**
-> MatchingDto update2(matcher_update_request)
+# **update3**
+> MatchingDto update3(matcher_update_request)
 
 Update a matcher based on improved links
 
@@ -424,10 +424,10 @@ from pprl_linkage_unit_service_api_client.models.matching_dto import MatchingDto
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -439,11 +439,11 @@ with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client
 
     try:
         # Update a matcher based on improved links
-        api_response = api_instance.update2(matcher_update_request)
-        print("The response of MultiLayerProtocolsApi->update2:\n")
+        api_response = api_instance.update3(matcher_update_request)
+        print("The response of MultiLayerProtocolsApi->update3:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling MultiLayerProtocolsApi->update2: %s\n" % e)
+        print("Exception when calling MultiLayerProtocolsApi->update3: %s\n" % e)
 ```
 
 
@@ -490,10 +490,10 @@ from pprl_linkage_unit_service_api_client.models.record_pair_dto import RecordPa
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 

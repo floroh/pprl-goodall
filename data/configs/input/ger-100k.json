@@ -1,0 +1,6 @@
+{
+  "mlflow_search_experiments": [
+    "datasets-germany"
+  ],
+  "mlflow_filter_string": "metrics.size.total = 100000"
+}

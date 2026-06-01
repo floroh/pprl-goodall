@@ -1,0 +1,101 @@
+[
+  {
+    "name": "datasets-usvr-subgroups",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "selection",
+            "config_path": "../dataset-creation/selection/usvr-content-filter-yob-1900-1949-noL.json"
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "variations": [
+        {
+          "type": "selection:usvr_selection_config.ordering_seed",
+          "replacements": ["abcd", "efgh"]
+        },
+        {
+          "type": "selection:size",
+          "replacements": [10000]
+        },
+        {
+          "type": "selection:overlap",
+          "replacements": [0.3, 0.1]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR",
+        "creation.subgroup": "YOB-1900+"
+      }
+    }
+  },
+  {
+    "name": "datasets-usvr-subgroups-v4",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "selection",
+            "config_path": "../dataset-creation/selection/usvr-content-filter-yob-1950-1979-noL.json"
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "variations": [
+        {
+          "type": "selection:usvr_selection_config.ordering_seed",
+          "replacements": ["abcd", "efgh"]
+        },
+        {
+          "type": "selection:size",
+          "replacements": [10000]
+        },
+        {
+          "type": "selection:overlap",
+          "replacements": [0.3, 0.1]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR",
+        "creation.subgroup": "YOB-1950+"
+      }
+    }
+  },
+  {
+    "name": "datasets-usvr-subgroups-v4",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "selection",
+            "config_path": "../dataset-creation/selection/usvr-content-filter-yob-1980-2009-noL.json"
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "variations": [
+        {
+          "type": "selection:usvr_selection_config.ordering_seed",
+          "replacements": ["abcd", "efgh"]
+        },
+        {
+          "type": "selection:size",
+          "replacements": [10000]
+        },
+        {
+          "type": "selection:overlap",
+          "replacements": [0.3, 0.1]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR",
+        "creation.subgroup": "YOB-1980+"
+      }
+    }
+  }
+]

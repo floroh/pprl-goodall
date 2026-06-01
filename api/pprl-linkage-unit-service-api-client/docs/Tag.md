@@ -11,6 +11,8 @@ Name | Type | Description | Notes
 **tag** | **str** |  | [optional] 
 **string_value** | **str** |  | [optional] 
 **numeric_value** | **float** |  | [optional] 
+**type** | **str** |  | [optional] 
+**origin** | **str** |  | [optional] 
 
 ## Example
 

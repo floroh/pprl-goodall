@@ -1,48 +1,59 @@
-matchGradeColorMap = {
-    "CERTAIN_MATCH": "green",
-    "PROBABLE": "blue",
-    "POSSIBLE_MATCH": "orange",
-    "NON_MATCH": "red",
-}
-
-gtLabelColorMap = {"TRUE_MATCH": "green", "TRUE_NON_MATCH": "red"}
-
-linkTypeColorMap = {
-    "TP": "green",
-    "TN": "blue",
-    "FN": "red",
-    "FP": "orange",
-    "FPd": "orange",
-    "Fpd": "yellow",
-}
-
-linkTypeOrder = {"TP": 0, "TN": 1, "FP": 2, "FN": 3}
-
-# Session state keys
-SELECTED_PROJECT_ID = "selected_project_id"
-SELECTED_PROTOCOL_ID = "selected_protocol_id"
-SELECTED_METHOD = "selected_method"
-SELECTED_METHOD_DISPLAY = "selected_method_display"
-COMBINE_FP = "combine_FP"
-COMBINE_MATCHGRADES = "combine_match_grades"
-FETCH_RECORD_PAIRS = "fetch_record_pairs"
-MSAL_HISTORY_DATA = "msal_history_data"
-NUMBER_OF_SHOW_PROJECTS = "number_of_show_projects"
+import streamlit as st
 
 
-def get_tag_value(tags, tag_name: str, numeric: bool = False):
-    if tags is not None:
-        for tag in tags:
-            if tag["tag"] == tag_name:
-                if numeric:
-                    return tag["numericValue"]
-                else:
-                    return tag["stringValue"]
-    return None
+service_overview_page = st.Page(
+    "server_pages/Services.py", title="Services Overview", icon=":material/dashboard:"
+)
+mlflow_page = st.Page(
+    "server_pages/MlFlow.py", title="Result analysis", icon=":material/monitor_heart:"
+)
+datasets_page = st.Page(
+    "server_pages/Datasets.py", title="Datasets", icon=":material/dataset:"
+)
+dataset_creator_page = st.Page(
+    "server_pages/Dataset_creator.py", title="Dataset creator", icon=":material/dataset:"
+)
+configurations_page = st.Page(
+    "server_pages/Configurations.py", title="Configurations", icon=":material/settings:"
+)
+projects_page = st.Page(
+    "server_pages/Projects.py", title="Projects", icon=":material/list:"
+)
+# projects_comparison_page = st.Page(
+#     "server_pages/Projects_Comparison.py",
+#     title="Project comparison",
+#     icon=":material/sync_alt:",
+# )
+protocol_creator_page = st.Page(
+    "server_pages/Protocol_creator.py",
+    title="Protocol creator",
+    icon=":material/create:",
+)
+protocols_page = st.Page(
+    "server_pages/Protocols.py", title="Protocols", icon=":material/list:"
+)
+analysis_page = st.Page(
+    "server_pages/Analysis.py", title="Analysis", icon=":material/analytics:"
+)
+mlal_demo_page = st.Page(
+    "server_pages/Multi-layer_protocol_demo.py",
+    title="Multi-layer active learning",
+    icon=":material/refresh:",
+)
 
-
-ATTRIBUTE_ORDER = ["FIRSTNAME", "MIDDLENAME", "LASTNAME", "CITY", "ZIP",
-                 "YEAROFBIRTH", "PLACEOFBIRTH", "COUNTRY", "GENDER", "STREET"]
-
-ATTRIBUTES_FOR_DISPLAY = ["FIRSTNAME", "MIDDLENAME", "LASTNAME", "CITY", "ZIP",
-                 "YEAROFBIRTH", "PLACEOFBIRTH"]
+pg = st.navigation(
+    {
+        "Infrastructure": [service_overview_page],
+        "Mlflow experiments": [mlflow_page],
+        "Setup": [datasets_page, dataset_creator_page, configurations_page],
+        "Projects": [projects_page],
+        "Protocols": [protocols_page, protocol_creator_page, analysis_page],
+        "Demos": [mlal_demo_page],
+    }
+)
+st.set_page_config(
+    layout="wide",
+    page_title="Goodall - PPRL evaluation framework",
+    page_icon=":material/data_object:",
+)
+pg.run()

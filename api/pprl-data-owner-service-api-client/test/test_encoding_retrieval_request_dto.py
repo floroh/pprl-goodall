@@ -38,6 +38,11 @@ class TestEncodingRetrievalRequestDto(unittest.TestCase):
                 encoding_id = pprl_data_owner_service_api_client.models.encoding_id_dto.EncodingIdDto(
                     method = '', 
                     project = '', ),
+                id_unique = None,
+                id_source = None,
+                id_local = None,
+                id_global = None,
+                id_blocks = None,
                 dataset_id = 56,
                 record_secret = ''
             )

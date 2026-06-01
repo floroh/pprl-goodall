@@ -1,0 +1,25 @@
+[
+  {
+    "name": "test-datasets",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "csvImport",
+            "config": {
+              "path": "data/csv-datasets/NCVR_10_10_2_min1E_n00",
+              "datasetDto": {
+                "dataset_id": 2012
+              }
+            }
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "CsvImport"
+      }
+    }
+  }
+]

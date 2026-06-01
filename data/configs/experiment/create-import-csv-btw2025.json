@@ -1,0 +1,25 @@
+[
+  {
+    "name": "datasets-btw2025",
+    "dataset_creation_config": {
+      "config_path": "../dataset-creation/import-csv.json",
+      "variations": [
+        {
+          "type": "csvImport:path",
+          "replacements":  [
+            "data/datasets/NCVR_10_10_1_min1E_n00",
+            "data/datasets/NCVR_10_10_2_min1E_n00",
+            "data/datasets/NCVR_10_10_3_min1E_n00",
+            "data/datasets/NCVR_50_50_10_min1E_n00",
+            "data/datasets/NCVR_50_50_10_min2E_n00"
+          ]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR",
+        "usage.publication": "btw2025"
+      }
+    }
+  }
+]

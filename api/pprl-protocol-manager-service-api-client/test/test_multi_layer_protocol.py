@@ -46,16 +46,26 @@ class TestMultiLayerProtocol(unittest.TestCase):
                         max_batches = 56, 
                         encoding_method = '', 
                         update_matcher = True, 
+                        link_selection_strategy = 'SORTED', 
                         update_type = 'NEW_IMPROVED', 
                         initial_threshold = 1.337, 
+                        stop_update_when_clerical_review_budget_is_reached = True, 
                         budget = 56, 
                         error_rate = 1.337, 
+                        attribute_weight_method = '', 
+                        initial_attribute_weights = {
+                            'key' : 1.337
+                            }, 
+                        attribute_error_rates = {
+                            'key' : 1.337
+                            }, 
                         project_id = '', 
                         batch_size = 56, 
                         current_batch = 56, 
                         number_of_reviews = 56, 
                         active = True, )
                     ],
+                linkage_project = '',
                 plaintext_dataset_id = 56,
                 initial_dataset_id = 56,
                 last_update = '',

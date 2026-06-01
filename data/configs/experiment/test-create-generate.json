@@ -1,0 +1,27 @@
+[
+  {
+    "name": "test-datasets",
+    "dataset_creation_config": {
+      "config": {
+        "stages": [
+          {
+            "type": "generation",
+            "config": {
+              "datasetId": 5000,
+              "germanyGeneratorConfig": {
+                "seed": "abcd",
+                "numberOfRecords": 100000,
+                "includeHouseholdStructures": false
+              }
+            }
+          }
+        ],
+        "clean_up_datasets": false
+      },
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "GermanGenerator"
+      }
+    }
+  }
+]

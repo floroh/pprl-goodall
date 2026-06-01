@@ -1,0 +1,11 @@
+{
+  "stages": [
+    {
+      "type": "csvImport",
+      "config": {
+        "path": "DUMMY"
+      }
+    }
+  ],
+  "clean_up_datasets": true
+}

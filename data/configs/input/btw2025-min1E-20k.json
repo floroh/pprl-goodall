@@ -1,0 +1,6 @@
+{
+  "mlflow_search_experiments": [
+    "datasets-btw2025"
+  ],
+  "mlflow_filter_string": "metrics.`size.total` = 20000 and params.dataset_name LIKE '%min1E%'"
+}

@@ -4,5 +4,7 @@ from goodall.api_helper.pm_api import protocol_analyzer_controller
 
 
 def fetch_tags_of_protocol(protocol_id: str):
-    tags = protocol_analyzer_controller.get_all_tags_as_table(ProtocolAnalysisRequestDto(protocolId=protocol_id))
+    tags = protocol_analyzer_controller.get_tags_from_protocol_as_table(
+        ProtocolAnalysisRequestDto(protocolId=protocol_id)
+    )
     return tags

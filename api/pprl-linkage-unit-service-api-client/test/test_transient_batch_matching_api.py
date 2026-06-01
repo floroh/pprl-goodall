@@ -33,6 +33,13 @@ class TestTransientBatchMatchingApi(unittest.TestCase):
         """
         pass
 
+    def test_compare(self) -> None:
+        """Test case for compare
+
+        Compare record pairs
+        """
+        pass
+
     def test_match(self) -> None:
         """Test case for match
 

@@ -1,6 +1,7 @@
 # flake8: noqa
 
 # import apis into api package
+from pprl_linkage_unit_service_api_client.api.actuator_api import ActuatorApi
 from pprl_linkage_unit_service_api_client.api.configuration_management_api import ConfigurationManagementApi
 from pprl_linkage_unit_service_api_client.api.dataset_analysis_api import DatasetAnalysisApi
 from pprl_linkage_unit_service_api_client.api.dataset_management_api import DatasetManagementApi

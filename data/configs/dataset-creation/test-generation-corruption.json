@@ -1,0 +1,31 @@
+{
+  "stages": [
+    {
+      "type": "generation",
+      "config": {
+        "germanyGeneratorConfig": {
+          "datasetId": 5000,
+          "seed": "abcd",
+          "numberOfRecords": 100000,
+          "includeHouseholdStructures": false
+        }
+      }
+    },
+    {
+      "type": "corruption",
+      "config": {
+        "inputDatasetId": 5000,
+        "configCreator": {
+          "name": "TEST",
+          "override": {
+            "@class": ".DataSetGeneratorConfig",
+            "originalSize": 2000,
+            "modifiedSize": 2000,
+            "sourceOverlap": 0.2
+          }
+        }
+      }
+    }
+  ],
+  "clean_up_datasets": false
+}

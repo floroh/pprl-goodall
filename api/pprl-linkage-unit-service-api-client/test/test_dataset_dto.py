@@ -36,8 +36,14 @@ class TestDatasetDto(unittest.TestCase):
         if include_optional:
             return DatasetDto(
                 dataset_id = 56,
+                dataset_name = '',
                 plaintext_dataset_id = 56,
-                dataset_name = ''
+                encoding_id_dto = pprl_linkage_unit_service_api_client.models.encoding_id_dto.EncodingIdDto(
+                    method = '', 
+                    project = '', ),
+                properties = {
+                    'key' : ''
+                    }
             )
         else:
             return DatasetDto(

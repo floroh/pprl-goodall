@@ -1,0 +1,9 @@
+{
+  "stages": [
+    {
+      "type": "selection",
+      "config_path": "selection/usvr-change-filter.json"
+    }
+  ],
+  "clean_up_datasets": false
+}

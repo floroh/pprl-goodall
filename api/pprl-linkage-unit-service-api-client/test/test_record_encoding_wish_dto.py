@@ -35,6 +35,11 @@ class TestRecordEncodingWishDto(unittest.TestCase):
         model = RecordEncodingWishDto()
         if include_optional:
             return RecordEncodingWishDto(
+                id_unique = None,
+                id_source = None,
+                id_local = None,
+                id_global = None,
+                id_blocks = None,
                 encoding_id = pprl_linkage_unit_service_api_client.models.encoding_id_dto.EncodingIdDto(
                     method = '', 
                     project = '', ),

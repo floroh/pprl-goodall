@@ -1,0 +1,7 @@
+{
+  "mlflow_search_experiments": [
+    "test-datasets"
+  ],
+  "mlflow_filter_string": "metrics.`overlap-relative.A-B` > 0",
+  "import_plain_datasets_from_mlflow": false
+}

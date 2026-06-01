@@ -1,0 +1,32 @@
+[
+  {
+    "name": "test-datasets",
+    "dataset_creation_config": {
+      "config_path": "../dataset-creation/selection.json",
+      "variations": [
+        {
+          "type": "selection:usvr_selection_config.ordering_seed",
+          "replacements":  [
+            "abcd"
+          ]
+        },
+        {
+          "type": "selection:size",
+          "replacements": [1000]
+        },
+        {
+          "type": "selection:overlap",
+          "replacements": [0.2]
+        },
+        {
+          "type": "selection:time.year_span",
+          "replacements": ["2-4"]
+        }
+      ],
+      "tags": {
+        "creation.domain": "Person",
+        "creation.origin": "NCVR"
+      }
+    }
+  }
+]

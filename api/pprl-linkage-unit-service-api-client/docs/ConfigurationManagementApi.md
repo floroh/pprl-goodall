@@ -1,17 +1,18 @@
 # pprl_linkage_unit_service_api_client.ConfigurationManagementApi
 
-All URIs are relative to *http://localhost:8082*
+All URIs are relative to *http://localhost:8182*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add**](ConfigurationManagementApi.md#add) | **POST** /config/ | Add a configuration
+[**create_matching**](ConfigurationManagementApi.md#create_matching) | **POST** /config/create | Create a matching configuration
 [**get_classifier_description**](ConfigurationManagementApi.md#get_classifier_description) | **POST** /config/classifier | Get classifier description
 [**get_configs**](ConfigurationManagementApi.md#get_configs) | **GET** /config/findAll | Get a list of all configuration IDs
 [**get_matching**](ConfigurationManagementApi.md#get_matching) | **POST** /config/findById | Get the configuration by its ID
 [**get_method_requirements**](ConfigurationManagementApi.md#get_method_requirements) | **GET** /config/findAllRequirements | Get descriptions of the requirements of all matching methods
-[**remove**](ConfigurationManagementApi.md#remove) | **DELETE** /config/unused | Remove unused configurations
-[**remove1**](ConfigurationManagementApi.md#remove1) | **DELETE** /config/ | Remove a configuration
-[**update1**](ConfigurationManagementApi.md#update1) | **PUT** /config/ | Override an existing configuration
+[**remove**](ConfigurationManagementApi.md#remove) | **DELETE** /config/ | Remove a configuration
+[**remove1**](ConfigurationManagementApi.md#remove1) | **DELETE** /config/unused | Remove unused configurations
+[**update2**](ConfigurationManagementApi.md#update2) | **PUT** /config/ | Override an existing configuration
 
 
 # **add**
@@ -28,10 +29,10 @@ from pprl_linkage_unit_service_api_client.models.matching_dto import MatchingDto
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -78,6 +79,73 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **create_matching**
+> MatchingDto create_matching(matching_creation_request_dto)
+
+Create a matching configuration
+
+### Example
+
+
+```python
+import pprl_linkage_unit_service_api_client
+from pprl_linkage_unit_service_api_client.models.matching_creation_request_dto import MatchingCreationRequestDto
+from pprl_linkage_unit_service_api_client.models.matching_dto import MatchingDto
+from pprl_linkage_unit_service_api_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to http://localhost:8182
+# See configuration.py for a list of all supported configuration parameters.
+configuration = pprl_linkage_unit_service_api_client.Configuration(
+    host = "http://localhost:8182"
+)
+
+
+# Enter a context with an instance of the API client
+with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = pprl_linkage_unit_service_api_client.ConfigurationManagementApi(api_client)
+    matching_creation_request_dto = pprl_linkage_unit_service_api_client.MatchingCreationRequestDto() # MatchingCreationRequestDto | 
+
+    try:
+        # Create a matching configuration
+        api_response = api_instance.create_matching(matching_creation_request_dto)
+        print("The response of ConfigurationManagementApi->create_matching:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ConfigurationManagementApi->create_matching: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **matching_creation_request_dto** | [**MatchingCreationRequestDto**](MatchingCreationRequestDto.md)|  | 
+
+### Return type
+
+[**MatchingDto**](MatchingDto.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **get_classifier_description**
 > MatchingDto get_classifier_description(matcher_id_dto)
 
@@ -93,10 +161,10 @@ from pprl_linkage_unit_service_api_client.models.matching_dto import MatchingDto
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -159,10 +227,10 @@ from pprl_linkage_unit_service_api_client.models.matcher_id_dto import MatcherId
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -222,10 +290,10 @@ from pprl_linkage_unit_service_api_client.models.matching_dto import MatchingDto
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -288,10 +356,10 @@ from pprl_linkage_unit_service_api_client.models.record_requirements_dto import 
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -337,72 +405,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **remove**
-> int remove(dry_run)
-
-Remove unused configurations
-
-### Example
-
-
-```python
-import pprl_linkage_unit_service_api_client
-from pprl_linkage_unit_service_api_client.rest import ApiException
-from pprint import pprint
-
-# Defining the host is optional and defaults to http://localhost:8082
-# See configuration.py for a list of all supported configuration parameters.
-configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
-)
-
-
-# Enter a context with an instance of the API client
-with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = pprl_linkage_unit_service_api_client.ConfigurationManagementApi(api_client)
-    dry_run = True # bool | 
-
-    try:
-        # Remove unused configurations
-        api_response = api_instance.remove(dry_run)
-        print("The response of ConfigurationManagementApi->remove:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling ConfigurationManagementApi->remove: %s\n" % e)
-```
-
-
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **dry_run** | **bool**|  | 
-
-### Return type
-
-**int**
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | OK |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **remove1**
-> remove1(matcher_id_dto)
+> remove(matcher_id_dto)
 
 Remove a configuration
 
@@ -415,10 +418,10 @@ from pprl_linkage_unit_service_api_client.models.matcher_id_dto import MatcherId
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -430,9 +433,9 @@ with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client
 
     try:
         # Remove a configuration
-        api_instance.remove1(matcher_id_dto)
+        api_instance.remove(matcher_id_dto)
     except Exception as e:
-        print("Exception when calling ConfigurationManagementApi->remove1: %s\n" % e)
+        print("Exception when calling ConfigurationManagementApi->remove: %s\n" % e)
 ```
 
 
@@ -465,8 +468,73 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **update1**
-> update1(matching_dto)
+# **remove1**
+> int remove1(dry_run)
+
+Remove unused configurations
+
+### Example
+
+
+```python
+import pprl_linkage_unit_service_api_client
+from pprl_linkage_unit_service_api_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to http://localhost:8182
+# See configuration.py for a list of all supported configuration parameters.
+configuration = pprl_linkage_unit_service_api_client.Configuration(
+    host = "http://localhost:8182"
+)
+
+
+# Enter a context with an instance of the API client
+with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = pprl_linkage_unit_service_api_client.ConfigurationManagementApi(api_client)
+    dry_run = True # bool | 
+
+    try:
+        # Remove unused configurations
+        api_response = api_instance.remove1(dry_run)
+        print("The response of ConfigurationManagementApi->remove1:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ConfigurationManagementApi->remove1: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **dry_run** | **bool**|  | 
+
+### Return type
+
+**int**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **update2**
+> update2(matching_dto)
 
 Override an existing configuration
 
@@ -479,10 +547,10 @@ from pprl_linkage_unit_service_api_client.models.matching_dto import MatchingDto
 from pprl_linkage_unit_service_api_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost:8082
+# Defining the host is optional and defaults to http://localhost:8182
 # See configuration.py for a list of all supported configuration parameters.
 configuration = pprl_linkage_unit_service_api_client.Configuration(
-    host = "http://localhost:8082"
+    host = "http://localhost:8182"
 )
 
 
@@ -494,9 +562,9 @@ with pprl_linkage_unit_service_api_client.ApiClient(configuration) as api_client
 
     try:
         # Override an existing configuration
-        api_instance.update1(matching_dto)
+        api_instance.update2(matching_dto)
     except Exception as e:
-        print("Exception when calling ConfigurationManagementApi->update1: %s\n" % e)
+        print("Exception when calling ConfigurationManagementApi->update2: %s\n" % e)
 ```
 
 

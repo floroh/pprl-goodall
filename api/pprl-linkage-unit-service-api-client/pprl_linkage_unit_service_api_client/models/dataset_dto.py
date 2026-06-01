@@ -19,20 +19,25 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
+from pprl_linkage_unit_service_api_client.models.encoding_id_dto import EncodingIdDto
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class DatasetDto(BaseModel):
     """
     DatasetDto
     """ # noqa: E501
     dataset_id: Optional[StrictInt] = Field(default=None, alias="datasetId")
-    plaintext_dataset_id: Optional[StrictInt] = Field(default=None, alias="plaintextDatasetId")
     dataset_name: Optional[StrictStr] = Field(default=None, alias="datasetName")
-    __properties: ClassVar[List[str]] = ["datasetId", "plaintextDatasetId", "datasetName"]
+    plaintext_dataset_id: Optional[StrictInt] = Field(default=None, alias="plaintextDatasetId")
+    encoding_id_dto: Optional[EncodingIdDto] = Field(default=None, alias="encodingIdDto")
+    properties: Optional[Dict[str, StrictStr]] = None
+    __properties: ClassVar[List[str]] = ["datasetId", "datasetName", "plaintextDatasetId", "encodingIdDto", "properties"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -44,8 +49,7 @@ class DatasetDto(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -70,6 +74,9 @@ class DatasetDto(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of encoding_id_dto
+        if self.encoding_id_dto:
+            _dict['encodingIdDto'] = self.encoding_id_dto.to_dict()
         return _dict
 
     @classmethod
@@ -83,8 +90,10 @@ class DatasetDto(BaseModel):
 
         _obj = cls.model_validate({
             "datasetId": obj.get("datasetId"),
+            "datasetName": obj.get("datasetName"),
             "plaintextDatasetId": obj.get("plaintextDatasetId"),
-            "datasetName": obj.get("datasetName")
+            "encodingIdDto": EncodingIdDto.from_dict(obj["encodingIdDto"]) if obj.get("encodingIdDto") is not None else None,
+            "properties": obj.get("properties")
         })
         return _obj
 

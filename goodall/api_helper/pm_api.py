@@ -1,21 +1,47 @@
-import logging
 from typing import List
 
 import pprl_protocol_manager_service_api_client as pm
-from pprl_protocol_manager_service_api_client import MultiLayerProtocol, DatasetCsvDto, \
-    EncodedTransferRequestDto, ProtocolExecutionDto
+from pprl_protocol_manager_service_api_client import (
+    MultiLayerProtocol,
+    DatasetCsvDto,
+    EncodedTransferRequestDto,
+    ProtocolExecutionDto,
+    DatasetGeneratorDto, GermanyGeneratorConfig,
+)
 
 from goodall.api_helper.pprl_clients import Service, get_client
+from goodall.models.services import ServiceStatus
 
-client = get_client(Service.Protocol_Manager)
+client = get_client(Service.Protocol_manager)
 do_preparation_controller = pm.DataOwnerPreparationApi(client)
 protocol_manager_controller = pm.PPRLProtocolManagerApi(client)
+protocol_analyzer_controller = pm.ProtocolAnalyzerApi(client)
+connectivity_controller = pm.ServiceConnectionsApi(client)
 
-logger = logging.getLogger(__name__)
+
+def check_connections() -> ServiceStatus:
+    return ServiceStatus(
+        name = "Protocol manager connectivity",
+        healthy=connectivity_controller.test_connections(),
+        endpoint=client.configuration.host
+    )
 
 
-def add_data_owner_dataset(csv_dataset: DatasetCsvDto):
-    do_preparation_controller.insert_from_csv(csv_dataset)
+def add_data_owner_dataset(csv_dataset: DatasetCsvDto) -> int:
+    return do_preparation_controller.insert_from_csv(csv_dataset)
+
+
+def add_generated_dataset(
+    dataset_id: int, number_of_records: int, include_household_structures: bool
+):
+    request = DatasetGeneratorDto(
+        datasetId=dataset_id,
+        germanyGeneratorConfig=GermanyGeneratorConfig(
+            numberOfRecords=number_of_records,
+            includeHouseholdStructures=include_household_structures,
+        ),
+    )
+    return do_preparation_controller.add_generated_dataset(request)
 
 
 def transfer_encoded_dataset(transfer_request: EncodedTransferRequestDto) -> int:
@@ -38,17 +64,23 @@ def get_protocols() -> list[MultiLayerProtocol]:
     return protocol_manager_controller.find_all()
 
 
-def create_example_3_layer_protocol(do_dataset_id: int = 2012,
-                                    lu_dataset_id: int = 2212,
-                                    initial_threshold: float = 0.75,
-                                    ppcr_budget: int = 200,
-                                    ppcr_batch_size_config: List[int] | None = None) -> MultiLayerProtocol:
+def create_example_3_layer_protocol(
+    do_dataset_id: int = 2012,
+    lu_dataset_id: int = 2212,
+    initial_threshold: float = 0.75,
+    ppcr_budget: int = 200,
+    ppcr_batch_size_config: List[int] | None = None,
+) -> MultiLayerProtocol:
     if ppcr_batch_size_config is None:
         ppcr_batch_size_config = [20]
-    protocol = protocol_manager_controller.get_example_multi_layer_protocol(protocol_type="RBF-ABF-PPCR")
+    protocol = protocol_manager_controller.get_example_multi_layer_protocol(
+        protocol_type="RBF-ABF-PPCR"
+    )
     protocol.plaintext_dataset_id = do_dataset_id
     protocol.initial_dataset_id = lu_dataset_id
     protocol.layers[0].initial_threshold = initial_threshold
+    # protocol.layers[0].link_selection_strategy = 'EXTERNAL_SERVICE'
+    protocol.layers[1].link_selection_strategy = "ALTERNATING"
     protocol.layers[2].budget = ppcr_budget
     protocol.layers[2].max_batches = 1
     protocol.layers[2].error_rate = 0.05
@@ -57,15 +89,37 @@ def create_example_3_layer_protocol(do_dataset_id: int = 2012,
     return create_protocol(protocol)
 
 
-def create_example_rbf_ppcr_layer_protocol(do_dataset_id: int = 2012,
-                                           lu_dataset_id: int = 2212,
-                                           initial_threshold: float = 0.75,
-                                           ppcr_budget: int = 200,
-                                           ppcr_batch_size_config: List[int] | None = None,
-                                           max_batches: int = 10) -> MultiLayerProtocol:
+def create_example_rbf_layer_protocol(
+    do_dataset_id: int = 2012,
+    lu_dataset_id: int = 2212,
+    initial_threshold: float = 0.75,
+) -> MultiLayerProtocol:
+    protocol = protocol_manager_controller.get_example_multi_layer_protocol(
+        protocol_type="RBF-PPCR"
+    )
+    protocol.plaintext_dataset_id = do_dataset_id
+    protocol.initial_dataset_id = lu_dataset_id
+    protocol.layers[0].initial_threshold = initial_threshold
+    del protocol.layers[-1]
+    protocol.layers[0].matcher_method = "DBSLeipzig/RBF/Train/PB"
+    # if do_dataset_id > 3000:
+    #     protocol.layers[0].matcher_method = "DBSLeipzig/RBF/Train/GerPB"
+    return create_protocol(protocol)
+
+
+def create_example_rbf_ppcr_layer_protocol(
+    do_dataset_id: int = 2012,
+    lu_dataset_id: int = 2212,
+    initial_threshold: float = 0.75,
+    ppcr_budget: int = 200,
+    ppcr_batch_size_config: List[int] | None = None,
+    max_batches: int = 10,
+) -> MultiLayerProtocol:
     if ppcr_batch_size_config is None:
         ppcr_batch_size_config = [20]
-    protocol = protocol_manager_controller.get_example_multi_layer_protocol(protocol_type="RBF-PPCR")
+    protocol = protocol_manager_controller.get_example_multi_layer_protocol(
+        protocol_type="RBF-PPCR"
+    )
     protocol.plaintext_dataset_id = do_dataset_id
     protocol.initial_dataset_id = lu_dataset_id
     protocol.layers[0].initial_threshold = initial_threshold
@@ -76,21 +130,43 @@ def create_example_rbf_ppcr_layer_protocol(do_dataset_id: int = 2012,
     return create_protocol(protocol)
 
 
-def create_example_abf_ppcr_protocol(do_dataset_id: int = 2012,
-                                     lu_dataset_id: int = 2112,
-                                     ppcr_budget: int = 200,
-                                     ppcr_batch_size_config: List[int] | None = None,
-                                     max_batches: int = 10) -> MultiLayerProtocol:
+def create_example_abf_ppcr_protocol(
+    do_dataset_id: int = 2012,
+    lu_dataset_id: int = 2112,
+    ppcr_budget: int = 200,
+    ppcr_batch_size_config: List[int] | None = None,
+    max_batches: int = 10,
+) -> MultiLayerProtocol:
     if ppcr_batch_size_config is None:
         ppcr_batch_size_config = [5]
-    protocol = protocol_manager_controller.get_example_multi_layer_protocol(protocol_type="ABF-PPCR")
+    protocol = protocol_manager_controller.get_example_multi_layer_protocol(
+        protocol_type="ABF-PPCR"
+    )
     protocol.plaintext_dataset_id = do_dataset_id
     protocol.initial_dataset_id = lu_dataset_id
-    protocol.layers[0].matcher_method = "DBSLeipzig/ABF/Freq/PB/Weka/WEKA_EXP_RANDOM_FOREST/trained/2112/675332752c3b2f74050b1acb"
+    protocol.layers[0].matcher_method = (
+        "DBSLeipzig/ABF/Freq/PB/Weka/"
+        "WEKA_EXP_RANDOM_FOREST/trained/"
+        "2112/675332752c3b2f74050b1acb"
+    )
     protocol.layers[1].budget = ppcr_budget
     protocol.layers[1].max_batches = max_batches
     protocol.layers[1].batch_size_config = ppcr_batch_size_config
     protocol.layers[1].batch_size = ppcr_batch_size_config[0]
+    return create_protocol(protocol)
+
+
+def create_example_abf_protocol(
+    do_dataset_id: int = 2012,
+    lu_dataset_id: int = 2112,
+) -> MultiLayerProtocol:
+    protocol = protocol_manager_controller.get_example_multi_layer_protocol(
+        protocol_type="ABF-PPCR"
+    )
+    protocol.plaintext_dataset_id = do_dataset_id
+    protocol.initial_dataset_id = lu_dataset_id
+    protocol.layers[0].matcher_method = "DBSLeipzig/ABF/Weighted"
+    protocol.layers.pop(1)
     return create_protocol(protocol)
 
 
@@ -104,7 +180,8 @@ def update_protocol(protocol: MultiLayerProtocol) -> MultiLayerProtocol:
 
 def skip_next_step_in_protocol(protocol: MultiLayerProtocol) -> MultiLayerProtocol:
     return protocol_manager_controller.skip_step_of_multi_layer_protocol(
-        protocol.protocol_id)
+        protocol.protocol_id
+    )
 
 
 def run_protocol_no_stop(protocol_id: str) -> MultiLayerProtocol:
@@ -113,7 +190,8 @@ def run_protocol_no_stop(protocol_id: str) -> MultiLayerProtocol:
 
 def run_protocol_single_step(protocol_id: str) -> MultiLayerProtocol:
     return run_protocol(
-        ProtocolExecutionDto(protocol_id=protocol_id, number_of_steps=1))
+        ProtocolExecutionDto(protocol_id=protocol_id, number_of_steps=1)
+    )
 
 
 def run_protocol(execution_dto: ProtocolExecutionDto) -> MultiLayerProtocol:

@@ -35,11 +35,21 @@ class TestDatasetCsvDto(unittest.TestCase):
         model = DatasetCsvDto()
         if include_optional:
             return DatasetCsvDto(
-                path = '',
-                dataset_id = 56
+                path = '0',
+                dataset_dto = pprl_protocol_manager_service_api_client.models.dataset_dto.DatasetDto(
+                    dataset_id = 56, 
+                    dataset_name = '', 
+                    plaintext_dataset_id = 56, 
+                    encoding_id_dto = pprl_protocol_manager_service_api_client.models.encoding_id_dto.EncodingIdDto(
+                        method = '', 
+                        project = '', ), 
+                    properties = {
+                        'key' : ''
+                        }, )
             )
         else:
             return DatasetCsvDto(
+                path = '0',
         )
         """
 

@@ -33,6 +33,13 @@ class TestConfigurationManagementApi(unittest.TestCase):
         """
         pass
 
+    def test_create_matching(self) -> None:
+        """Test case for create_matching
+
+        Create a matching configuration
+        """
+        pass
+
     def test_get_classifier_description(self) -> None:
         """Test case for get_classifier_description
 
@@ -64,19 +71,19 @@ class TestConfigurationManagementApi(unittest.TestCase):
     def test_remove(self) -> None:
         """Test case for remove
 
-        Remove unused configurations
+        Remove a configuration
         """
         pass
 
     def test_remove1(self) -> None:
         """Test case for remove1
 
-        Remove a configuration
+        Remove unused configurations
         """
         pass
 
-    def test_update1(self) -> None:
-        """Test case for update1
+    def test_update2(self) -> None:
+        """Test case for update2
 
         Override an existing configuration
         """

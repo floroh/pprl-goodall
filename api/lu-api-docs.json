@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.1",
+    "openapi": "3.1.0",
     "info": {
         "title": "PPRL Linkage Unit Service API",
         "description": "Linkage / Matching services for privacy-preserving record linkage",
@@ -11,7 +11,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8082",
+            "url": "http://localhost:8182",
             "description": "Generated server url"
         }
     ],
@@ -31,6 +31,14 @@
         {
             "name": "Configuration management",
             "description": "Manage matching configurations"
+        },
+        {
+            "name": "Actuator",
+            "description": "Monitor and interact",
+            "externalDocs": {
+                "description": "Spring Boot Actuator Web API Documentation",
+                "url": "https://docs.spring.io/spring-boot/docs/current/actuator-api/html/"
+            }
         },
         {
             "name": "Linkage result analysis",
@@ -172,13 +180,73 @@
                 }
             }
         },
+        "/project/": {
+            "put": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Update a linkage project",
+                "operationId": "update_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchMatchProjectDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Project-based batch matching"
+                ],
+                "summary": "Create new linkage project",
+                "operationId": "create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchMatchProjectDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/config/": {
             "put": {
                 "tags": [
                     "Configuration management"
                 ],
                 "summary": "Override an existing configuration",
-                "operationId": "update_1",
+                "operationId": "update_2",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -222,7 +290,7 @@
                     "Configuration management"
                 ],
                 "summary": "Remove a configuration",
-                "operationId": "remove_1",
+                "operationId": "remove",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -270,7 +338,7 @@
                 }
             }
         },
-        "/record/findBySource/{idDataset}": {
+        "/record/findBySource/{datasetId}": {
             "post": {
                 "tags": [
                     "Dataset management"
@@ -279,11 +347,12 @@
                 "operationId": "findByDatasetAndSource",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -314,7 +383,7 @@
                 }
             }
         },
-        "/record/findByRecordId/{idDataset}": {
+        "/record/findByRecordId/{datasetId}": {
             "post": {
                 "tags": [
                     "Dataset management"
@@ -323,11 +392,12 @@
                 "operationId": "findByRecordId",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -406,7 +476,7 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -579,7 +649,7 @@
                     "Multi layer protocols"
                 ],
                 "summary": "Update a matcher based on improved links",
-                "operationId": "update_2",
+                "operationId": "update_3",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -728,37 +798,6 @@
                 }
             }
         },
-        "/project/": {
-            "post": {
-                "tags": [
-                    "Project-based batch matching"
-                ],
-                "summary": "Create new linkage project",
-                "operationId": "create",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BatchMatchProjectDto"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BatchMatchProjectDto"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/insert": {
             "post": {
                 "tags": [
@@ -858,7 +897,7 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -888,7 +927,7 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -924,6 +963,37 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/MatcherIdDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchingDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/create": {
+            "post": {
+                "tags": [
+                    "Configuration management"
+                ],
+                "summary": "Create a matching configuration",
+                "operationId": "createMatching",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MatchingCreationRequestDto"
                             }
                         }
                     },
@@ -1005,6 +1075,37 @@
                 }
             }
         },
+        "/batch/compare": {
+            "post": {
+                "tags": [
+                    "Transient batch matching"
+                ],
+                "summary": "Compare record pairs",
+                "operationId": "compare",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ComparingRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MatchResultDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/batch/cluster": {
             "post": {
                 "tags": [
@@ -1032,6 +1133,100 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/analysis/tag/{datasetId}": {
+            "get": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get tags from database",
+                "operationId": "getTags",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Add tags to database",
+                "operationId": "saveTags",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Delete all tags of a dataset from database",
+                "operationId": "deleteTags",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -1132,6 +1327,54 @@
                 }
             }
         },
+        "/analysis/pair-tags/{datasetId}": {
+            "post": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get tags for pairs",
+                "operationId": "runPairAnalysis",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RecordIdPairDto"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/analysis/eval": {
             "post": {
                 "tags": [
@@ -1194,7 +1437,7 @@
                 }
             }
         },
-        "/record/{idDataset}/count": {
+        "/record/{datasetId}/count": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -1203,12 +1446,12 @@
                 "operationId": "count",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -1227,7 +1470,7 @@
                 }
             }
         },
-        "/record/{idDataset}/all": {
+        "/record/{datasetId}/all": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -1236,12 +1479,12 @@
                 "operationId": "getAll",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     },
                     {
@@ -1279,12 +1522,12 @@
                 "operationId": "deleteAll",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -1295,7 +1538,7 @@
                 }
             }
         },
-        "/record/datasets/{idDataset}": {
+        "/record/datasets/{datasetId}": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -1304,12 +1547,12 @@
                 "operationId": "getDatasetDescription",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -1334,12 +1577,12 @@
                 "operationId": "deleteDataset",
                 "parameters": [
                     {
-                        "name": "idDataset",
+                        "name": "datasetId",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -1366,7 +1609,7 @@
                                     "type": "array",
                                     "items": {
                                         "type": "integer",
-                                        "format": "int32"
+                                        "format": "int64"
                                     }
                                 }
                             }
@@ -1375,7 +1618,7 @@
                 }
             }
         },
-        "/record/compare/{idDataset0}/{idDataset1}": {
+        "/record/compare/{datasetId0}/{datasetId1}": {
             "get": {
                 "tags": [
                     "Dataset management"
@@ -1384,21 +1627,21 @@
                 "operationId": "compareDatasets",
                 "parameters": [
                     {
-                        "name": "idDataset0",
+                        "name": "datasetId0",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     },
                     {
-                        "name": "idDataset1",
+                        "name": "datasetId1",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int32"
+                            "format": "int64"
                         }
                     }
                 ],
@@ -1664,6 +1907,49 @@
                 }
             }
         },
+        "/analysis/tag/{datasetId}/{origin}": {
+            "get": {
+                "tags": [
+                    "Dataset analysis"
+                ],
+                "summary": "Get tags from database",
+                "operationId": "getTagsByOrigin",
+                "parameters": [
+                    {
+                        "name": "datasetId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "origin",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/analysis/findAll": {
             "get": {
                 "tags": [
@@ -1681,6 +1967,230 @@
                                     "items": {
                                         "type": "string"
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator root web endpoint",
+                "operationId": "links",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "$ref": "#/components/schemas/Link"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics'",
+                "operationId": "listNames",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/metrics/{requiredMetricName}": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'metrics-requiredMetricName'",
+                "operationId": "metric",
+                "parameters": [
+                    {
+                        "name": "requiredMetricName",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tag",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/actuator/mappings": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'mappings'",
+                "operationId": "mappings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/info": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'info'",
+                "operationId": "info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/actuator/health": {
+            "get": {
+                "tags": [
+                    "Actuator"
+                ],
+                "summary": "Actuator web endpoint 'health'",
+                "operationId": "health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/vnd.spring-boot.actuator.v3+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/vnd.spring-boot.actuator.v2+json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
                                 }
                             }
                         }
@@ -1708,7 +2218,7 @@
                     "Configuration management"
                 ],
                 "summary": "Remove unused configurations",
-                "operationId": "remove",
+                "operationId": "remove_1",
                 "parameters": [
                     {
                         "name": "dryRun",
@@ -1750,6 +2260,7 @@
             },
             "EncodingIdDto": {
                 "type": "object",
+                "description": "ID of an encoding scheme",
                 "properties": {
                     "method": {
                         "type": "string",
@@ -1759,8 +2270,7 @@
                         "type": "string",
                         "description": "Unique name of the record-linkage project"
                     }
-                },
-                "description": "ID of an encoding scheme"
+                }
             },
             "RecordDto": {
                 "type": "object",
@@ -1770,7 +2280,7 @@
                     },
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "encodingId": {
                         "$ref": "#/components/schemas/EncodingIdDto"
@@ -1826,11 +2336,11 @@
                         "format": "double"
                     },
                     "properties": {
-                        "uniqueItems": true,
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "uniqueItems": true
                     },
                     "attributeSimilarities": {
                         "type": "object",
@@ -1868,175 +2378,12 @@
                     "numericValue": {
                         "type": "number",
                         "format": "double"
-                    }
-                }
-            },
-            "AttributeDescriptionDto": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "displayName": {
-                        "type": "string"
-                    },
-                    "required": {
-                        "type": "boolean",
-                        "deprecated": true
-                    },
-                    "validations": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "MatcherIdDto": {
-                "type": "object",
-                "properties": {
-                    "method": {
-                        "type": "string",
-                        "description": "Name of the matching scheme"
-                    },
-                    "project": {
-                        "type": "string",
-                        "description": "(Optional) Project name where this scheme is used"
-                    }
-                },
-                "description": "ID of an matching scheme"
-            },
-            "MatchingDto": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "$ref": "#/components/schemas/MatcherIdDto"
-                    },
-                    "validation": {
-                        "$ref": "#/components/schemas/RecordRequirementsDto"
-                    },
-                    "config": {
-                        "type": "string",
-                        "description": "Configuration / parameters to build the matcher"
-                    },
-                    "classifierDescription": {
-                        "type": "string",
-                        "description": "Description of the classifier"
-                    }
-                },
-                "description": "Description of a matching scheme"
-            },
-            "RecordRequirementsDto": {
-                "type": "object",
-                "properties": {
-                    "method": {
-                        "type": "string"
-                    },
-                    "supportedEncodingMethods": {
-                        "type": "array",
-                        "description": "List of encoding methods that can be matched with this scheme",
-                        "items": {
-                            "type": "string",
-                            "description": "List of encoding methods that can be matched with this scheme"
-                        }
-                    },
-                    "attributes": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/AttributeDescriptionDto"
-                        }
-                    }
-                },
-                "description": "Description of requirements for this scheme"
-            },
-            "SearchResultDto": {
-                "type": "object",
-                "properties": {
-                    "queryId": {
-                        "$ref": "#/components/schemas/RecordIdDto"
-                    },
-                    "matches": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/SearchResultEntryDto"
-                        }
-                    }
-                }
-            },
-            "SearchResultEntryDto": {
-                "type": "object",
-                "properties": {
-                    "foundId": {
-                        "$ref": "#/components/schemas/RecordIdDto"
-                    },
-                    "similarity": {
-                        "type": "number",
-                        "format": "double"
-                    }
-                }
-            },
-            "DatasetDto": {
-                "type": "object",
-                "properties": {
-                    "datasetId": {
-                        "type": "integer",
-                        "format": "int32"
-                    },
-                    "plaintextDatasetId": {
-                        "type": "integer",
-                        "format": "int32"
-                    },
-                    "datasetName": {
-                        "type": "string"
-                    }
-                }
-            },
-            "MatcherUpdateRequest": {
-                "type": "object",
-                "properties": {
-                    "projectId": {
-                        "type": "string"
                     },
                     "type": {
-                        "type": "string",
-                        "enum": [
-                            "NEW_IMPROVED",
-                            "UPPER_IMPROVED",
-                            "IMPROVED",
-                            "CR_ONLY"
-                        ]
-                    }
-                }
-            },
-            "BatchMatchProjectExecutionDto": {
-                "type": "object",
-                "properties": {
-                    "projectId": {
                         "type": "string"
                     },
-                    "fromState": {
-                        "type": "string",
-                        "enum": [
-                            "COLLECTING",
-                            "BLOCKING",
-                            "LINKING",
-                            "CLASSIFICATION",
-                            "POSTPROCESSING",
-                            "CLUSTERING",
-                            "DONE"
-                        ]
-                    },
-                    "toState": {
-                        "type": "string",
-                        "enum": [
-                            "COLLECTING",
-                            "BLOCKING",
-                            "LINKING",
-                            "CLASSIFICATION",
-                            "POSTPROCESSING",
-                            "CLUSTERING",
-                            "DONE"
-                        ]
+                    "origin": {
+                        "type": "string"
                     }
                 }
             },
@@ -2057,7 +2404,7 @@
                     },
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "interactive": {
                         "type": "boolean"
@@ -2172,6 +2519,184 @@
                     }
                 }
             },
+            "AttributeDescriptionDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean",
+                        "deprecated": true
+                    },
+                    "validations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "MatcherIdDto": {
+                "type": "object",
+                "description": "ID of an matching scheme",
+                "properties": {
+                    "method": {
+                        "type": "string",
+                        "description": "Name of the matching scheme"
+                    },
+                    "project": {
+                        "type": "string",
+                        "description": "(Optional) Project name where this scheme is used"
+                    }
+                }
+            },
+            "MatchingDto": {
+                "type": "object",
+                "description": "Description of a matching scheme",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/MatcherIdDto",
+                        "description": "Name of this matching scheme"
+                    },
+                    "validation": {
+                        "$ref": "#/components/schemas/RecordRequirementsDto",
+                        "description": "Description of requirements for this scheme"
+                    },
+                    "config": {
+                        "type": "string",
+                        "description": "Configuration / parameters to build the matcher"
+                    },
+                    "classifierDescription": {
+                        "type": "string",
+                        "description": "Description of the classifier"
+                    }
+                }
+            },
+            "RecordRequirementsDto": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string"
+                    },
+                    "supportedEncodingMethods": {
+                        "type": "array",
+                        "description": "List of encoding methods that can be matched with this scheme",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AttributeDescriptionDto"
+                        }
+                    }
+                }
+            },
+            "SearchResultDto": {
+                "type": "object",
+                "properties": {
+                    "queryId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "matches": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SearchResultEntryDto"
+                        }
+                    }
+                }
+            },
+            "SearchResultEntryDto": {
+                "type": "object",
+                "properties": {
+                    "foundId": {
+                        "$ref": "#/components/schemas/RecordIdDto"
+                    },
+                    "similarity": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                }
+            },
+            "DatasetDto": {
+                "type": "object",
+                "properties": {
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "datasetName": {
+                        "type": "string"
+                    },
+                    "plaintextDatasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "encodingIdDto": {
+                        "$ref": "#/components/schemas/EncodingIdDto"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "MatcherUpdateRequest": {
+                "type": "object",
+                "properties": {
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "NEW_IMPROVED",
+                            "UPPER_IMPROVED",
+                            "IMPROVED",
+                            "CR_ONLY"
+                        ]
+                    }
+                }
+            },
+            "BatchMatchProjectExecutionDto": {
+                "type": "object",
+                "properties": {
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "fromState": {
+                        "type": "string",
+                        "enum": [
+                            "COLLECTING",
+                            "BLOCKING",
+                            "LINKING",
+                            "CLASSIFICATION",
+                            "POSTPROCESSING",
+                            "CLUSTERING",
+                            "DONE"
+                        ]
+                    },
+                    "toState": {
+                        "type": "string",
+                        "enum": [
+                            "COLLECTING",
+                            "BLOCKING",
+                            "LINKING",
+                            "CLASSIFICATION",
+                            "POSTPROCESSING",
+                            "CLUSTERING",
+                            "DONE"
+                        ]
+                    }
+                }
+            },
             "MatcherTrainingsRequest": {
                 "type": "object",
                 "properties": {
@@ -2180,7 +2705,7 @@
                     },
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "minSimilarity": {
                         "type": "number",
@@ -2194,10 +2719,11 @@
             },
             "GroundTruthDto": {
                 "type": "object",
+                "description": "Ground truth links of a dataset",
                 "properties": {
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "recordIdPairs": {
                         "type": "array",
@@ -2205,8 +2731,7 @@
                             "$ref": "#/components/schemas/RecordIdPairDto"
                         }
                     }
-                },
-                "description": "Ground truth links of a dataset"
+                }
             },
             "RecordIdPairDto": {
                 "type": "object",
@@ -2223,6 +2748,59 @@
                             "TRUE_MATCH",
                             "TRUE_NON_MATCH"
                         ]
+                    }
+                }
+            },
+            "MatchingCreationRequestDto": {
+                "type": "object",
+                "description": "Request for creating a matching definition.",
+                "properties": {
+                    "weightSelectionMethod": {
+                        "type": "string",
+                        "enum": [
+                            "NONE",
+                            "FELLEGI_SUNTER"
+                        ]
+                    },
+                    "matchingCreationMethod": {
+                        "type": "string",
+                        "enum": [
+                            "BASE_CONFIG_ADAPTION"
+                        ]
+                    },
+                    "baseMatcherId": {
+                        "$ref": "#/components/schemas/MatcherIdDto"
+                    },
+                    "outputMatcherId": {
+                        "$ref": "#/components/schemas/MatcherIdDto"
+                    },
+                    "attributeWeights": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "attributeMWeights": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "attributeUWeights": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "datasetId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "persist": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -2263,6 +2841,61 @@
                     }
                 }
             },
+            "ComparingRequestDto": {
+                "type": "object",
+                "properties": {
+                    "recordPairs": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordPairWithRecordsDto"
+                        }
+                    },
+                    "method": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RecordPairWithRecordsDto": {
+                "type": "object",
+                "properties": {
+                    "record0": {
+                        "$ref": "#/components/schemas/RecordDto"
+                    },
+                    "record1": {
+                        "$ref": "#/components/schemas/RecordDto"
+                    },
+                    "projectId": {
+                        "type": "string"
+                    },
+                    "matchGrade": {
+                        "type": "string"
+                    },
+                    "similarity": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "properties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "uniqueItems": true
+                    },
+                    "attributeSimilarities": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    }
+                }
+            },
             "ClusteringRequestDto": {
                 "type": "object",
                 "properties": {
@@ -2282,7 +2915,7 @@
                 "properties": {
                     "datasetId": {
                         "type": "integer",
-                        "format": "int32"
+                        "format": "int64"
                     },
                     "projectId": {
                         "type": "string"
@@ -2322,11 +2955,11 @@
                         "type": "string"
                     },
                     "pairProperties": {
-                        "uniqueItems": true,
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "uniqueItems": true
                     }
                 }
             },
@@ -2344,6 +2977,24 @@
             "RecordEncodingWishDto": {
                 "type": "object",
                 "properties": {
+                    "id.unique": {
+                        "type": "object"
+                    },
+                    "id.source": {
+                        "type": "object"
+                    },
+                    "id.local": {
+                        "type": "object"
+                    },
+                    "id.global": {
+                        "type": "object"
+                    },
+                    "id.blocks": {
+                        "type": "object",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
                     "encodingId": {
                         "$ref": "#/components/schemas/EncodingIdDto"
                     },
@@ -2353,6 +3004,17 @@
                     "orderId": {
                         "type": "integer",
                         "format": "int64"
+                    }
+                }
+            },
+            "Link": {
+                "type": "object",
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "templated": {
+                        "type": "boolean"
                     }
                 }
             }

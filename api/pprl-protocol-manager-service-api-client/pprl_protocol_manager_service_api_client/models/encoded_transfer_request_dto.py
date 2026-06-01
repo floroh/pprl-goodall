@@ -22,17 +22,20 @@ from typing import Any, ClassVar, Dict, List, Optional
 from pprl_protocol_manager_service_api_client.models.encoding_id_dto import EncodingIdDto
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class EncodedTransferRequestDto(BaseModel):
     """
     EncodedTransferRequestDto
     """ # noqa: E501
-    data_owner_dataset_id: Optional[StrictInt] = Field(default=None, alias="dataOwnerDatasetId")
+    data_owner_dataset_id: StrictInt = Field(alias="dataOwnerDatasetId")
+    linkage_unit_dataset_id: Optional[StrictInt] = Field(default=None, alias="linkageUnitDatasetId")
     encoding: EncodingIdDto
-    __properties: ClassVar[List[str]] = ["dataOwnerDatasetId", "encoding"]
+    __properties: ClassVar[List[str]] = ["dataOwnerDatasetId", "linkageUnitDatasetId", "encoding"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -44,8 +47,7 @@ class EncodedTransferRequestDto(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -86,6 +88,7 @@ class EncodedTransferRequestDto(BaseModel):
 
         _obj = cls.model_validate({
             "dataOwnerDatasetId": obj.get("dataOwnerDatasetId"),
+            "linkageUnitDatasetId": obj.get("linkageUnitDatasetId"),
             "encoding": EncodingIdDto.from_dict(obj["encoding"]) if obj.get("encoding") is not None else None
         })
         return _obj
